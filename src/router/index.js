@@ -23,18 +23,17 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-router.beforeEach((to, from, next)=>{
-  console.log(to.meta.isAuthenticated);
-  if(to.name != 'login'){
-    if(to.meta.isAuthenticated){
-      next('login')
-    }else{
-      next()
-    }
-  }else{
-    next()
-  }
-  
-})
+// router.beforeEach((to, from, next)=>{
+//   console.log(to.meta.isAuthenticated);
+//   if(to.name != 'login'){
+//     if(to.meta.isAuthenticated){
+//       next('login')
+//     }else{
+//       next()
+//     }
+//   }else{
+//     next()
+//   }
+// })
 
 export default router
