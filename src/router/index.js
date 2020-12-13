@@ -23,11 +23,16 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+/*路由跳转之前判断*/
 // router.beforeEach((to, from, next)=>{
-//   console.log(to.meta.isAuthenticated);
 //   if(to.name != 'login'){
 //     if(to.meta.isAuthenticated){
-//       next('login')
+//       const token = cookie.get(process.env.VUE_APP_SESSION_KEY)
+//       if (typeof token !== 'string' || !token) {
+//         return next('login')
+//       }else{
+//         next()
+//       }
 //     }else{
 //       next()
 //     }

@@ -1,10 +1,16 @@
 <template>
   <div class="home">
-    <nav-bar
-      :title="title"/>
-    <Search 
-      @Search="Search"
-      @Cancel="Cancel"/>
+    <!-- 导航栏 -->
+    <nav-bar :title="title"/>
+    
+    <!-- 搜索 -->
+    <Search @Search="Search" @Cancel="Cancel"/>
+    
+    <!-- 地图 -->
+    <map-content class="map_box"/>
+      
+    
+    <!-- 底部 -->
     <tab-bar/>
   </div>
 </template>
@@ -12,13 +18,14 @@
 import navBar from '@/components/navBar'
 import tabBar from '@/components/tabBar'
 import Search from './children/search'
-import NavBar from '../../components/navBar.vue'
+import mapContent from './children/mapContent'
 export default {
   name:'home',
   components: {
     navBar,
     tabBar,
-    Search
+    Search,
+    mapContent
   },
   data(){
     return {
@@ -36,7 +43,16 @@ export default {
 }
 </script>
 <style scoped>
-  /deep/.van-nav-bar__title{
-  color: #1989fa;
+.home{
+  height:100%
+}
+/deep/.van-nav-bar__title{
+  color: #fff;
+}
+/deep/.van-nav-bar__content{
+  background: #1989fa;
+}
+.map_box{
+  height: calc(100% - 50px - 46px - 54px);
 }
 </style>

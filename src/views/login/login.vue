@@ -10,6 +10,7 @@
 import selectType from './children/selectType'
 import navBar from '@/components/navBar'
 import {login} from '@/network/login'
+import { mapMutations  } from 'vuex'
 export default {
   name: 'login',
   components: {
@@ -22,9 +23,16 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({saveToken}),
     login(value){
+      let that = this
       login().then(res => {
         console.log(res);
+        //保存token
+        // that.saveToken({ Authorization: _this.userToken })
+        that.$router.push({path:'/home'})
+      }).catch(err => {
+        console.log(err);
       })
     }
   }

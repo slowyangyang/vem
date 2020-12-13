@@ -1,5 +1,5 @@
-import request from '../request'
+import {request} from '../request'
 
-export const login = function(){
+export function login(){
   return request({url:''})
 }

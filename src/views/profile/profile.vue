@@ -1,12 +1,20 @@
 <template>
-  <h1>profile</h1>
+  <div class="">
+
+  </div>
 </template>
 
 <script>
 export default {
-  name:'profile'
+  name: "",
+  data() {
+      return {}
+  },
+  components: {},
+  methods: {}
 }
 </script>
-<style scoped>
 
+<style scoped>
+    
 </style>
