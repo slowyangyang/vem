@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from './home'
 import  Monitor from './monitor'
 import Profile from './profile'
+import policePush from './profile/policePush'
 import Login from './login'
 
 Vue.use(VueRouter)
@@ -15,11 +16,11 @@ const routes = [
   Home,
   Monitor,
   Profile,
-  Login
+  Login,
+  policePush
 ]
 
 const router = new VueRouter({
-  mode: 'history',
   base: process.env.BASE_URL,
   routes
 })
