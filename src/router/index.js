@@ -29,10 +29,14 @@ const router = new VueRouter({
 /*路由跳转之前判断*/
 router.beforeEach((to, from, next)=>{
   let that = this
-  if(to.name != 'login'){
+  console.log(to);
+  if(to.matched.length == 0){
+    next("/404")
+  }
+  if(to.path != '/login'){
     if(to.meta.isAuthenticated){
       const cookie = getCookie("JSESSIONID")
-      if(typeof cookie === 'string' || cookie) {
+      if(!cookie) {
         next()
       }else{
         next('login')

@@ -6,7 +6,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    cookie:getCookie("userToken") ? getCookie("userToken") : ''
+    JSESSIONID:getCookie("userToken") ? getCookie("userToken") : ''
+  },
+  getters: {
+    emitCookie(state){
+      return state.JSESSIONID
+    }
   },
   mutations: {
     saveCookie(state,payload){

@@ -9,8 +9,10 @@ export function request(config){
   // 请求拦截
   instance.interceptors.request.use(config => {
     // 有 token就带上
-  if (store.state.JSESSIONID) {
-    config.headers.JSESSIONID = store.state.JSESSIONID
+    console.log(store.getters.emitCookie);
+  if(store.getters.emitCookie) {
+    // config.headers.cookie = store.getters.emitCookie
+    axios.defaults.withCredentials = true;
   }
     return config;
   }, error => {

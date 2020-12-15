@@ -3,6 +3,7 @@
     <nav-bar 
       :title="title"/>
     <select-type @login="login"></select-type>
+    <van-loading color="#1989fa" v-if="showLoading"/>
   </div>
 </template>
 <script>
@@ -37,7 +38,8 @@ export default {
       code:'',
       APPID :'wxf41afaa220983a6c',
       local:'',
-      openId:''
+      openId:'',
+      showLoading:false
     }
   },
   created(){
@@ -50,20 +52,22 @@ export default {
       if(this.openID){
         value.openID = this.openID
       }
+      this.showLoading = true
       login(value).then(res => {
-        console.log(res);
         let data = res.data
+        this.showLoading = false
         if(data.status == 0){
           //设置coolie
           setCookie("JSESSIONID",data.jwtToken)
           // 保存cookie
-            that.saveCookie({ cookie: data.jwtToken})
+            that.saveCookie({ JSESSIONID: data.jwtToken})
             that.$router.push({path:'/home'})
             this.$notify({ type: 'primary', message: '登录成功',duration: 2000, });
           }else{
             this.$notify({ type: 'danger', message: '登陆失败,请重新登录',duration: 1000, });
         }
       }).catch(err => {
+        this.showLoading = false
         this.$notify({ type: 'primary', message: '登录超时，请重新登录',duration: 1000, });
       })
     },
@@ -78,8 +82,10 @@ export default {
     },
     getOpenId (code) { // 通过code获取 openId等用户信息
       let _this = this
+      this.showLoading = true
       getAppId({code}).then((res) => {
         console.log(res);
+        this.showLoading = false
           let data = res.data
           if (data.status == 0) {
             this.$router.push({path:'/home'})
@@ -89,7 +95,9 @@ export default {
             this.$notify({ type: 'warning', message: '请先登录',duration: 1000, });
           }
       }).catch((error) => {
-          console.log(error)
+        this.showLoading = false
+        this.$notify({ type: 'warning', message: '请先登录',duration: 1000, });
+         console.log(error)
       })
     },
     getUrlParam(name){

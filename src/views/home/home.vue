@@ -9,7 +9,7 @@
     <!-- 地图 -->
     <map-content class="map_box"/>
       
-    
+    <van-loading color="#1989fa" v-if="showLoading"/>
     <!-- 底部 -->
     <tab-bar/>
   </div>
@@ -20,6 +20,7 @@ import tabBar from '@/components/tabBar'
 import Search from './children/search'
 import mapContent from './children/mapContent'
 import {getCookie} from 'common/utils'
+import { getSDK } from 'network/home'
 export default {
   name:'home',
   components: {
@@ -30,10 +31,13 @@ export default {
   },
   data(){
     return {
-      title:'车辆监控'
+      title:'车辆监控',
+      showLoading:false
     }
   },
   mounted(){
+    console.log(this.$store.getters.emitCookie)
+    this.getJsSdk()
   },
   methods: {
    Search(e){
@@ -41,6 +45,13 @@ export default {
    },
    Cancel(){
      //清除搜索内容
+   },
+   getJsSdk(){
+    let url = location.href.split("#")[0]
+    console.log(url);
+    getSDK().then(res => {
+      console.log(res);
+    })
    }
   }  
 }
