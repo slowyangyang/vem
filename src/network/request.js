@@ -1,13 +1,17 @@
 import axios from 'axios'
+import store from 'vuex'
 export function request(config){
   const instance = axios.create({
-    baseURL: '',
+    baseURL: 'http://192.168.1.136:9002',
     timeout: 5000,
   });
 
   // 请求拦截
-  axios.interceptors.request.use(config => {
-
+  instance.interceptors.request.use(config => {
+    // 有 token就带上
+  if (store.state.JSESSIONID) {
+    config.headers.JSESSIONID = store.state.JSESSIONID
+  }
     return config;
   }, error => {
 
@@ -15,9 +19,9 @@ export function request(config){
   });
 
   // 响应拦截
-  axios.interceptors.response.use(res => {
+  instance.interceptors.response.use(res => {
 
-    return response;
+    return res;
   }, error => {
 
     return Promise.reject(error);
@@ -25,4 +29,3 @@ export function request(config){
 
   return instance(config)
 }
-

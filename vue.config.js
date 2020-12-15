@@ -11,16 +11,24 @@ module.exports = {
           "windows.jQuery":"jquery"
       })
     ],
-    // devServer: {//跨域配置
-			//     proxy: {
-			// 			'/api':{
-			// 				target:'https://api.apiopen.top',
-			// 				changeOrigin: true,
-			// 				pathRewrite:{
-			// 					'^/api':'https://api.apiopen.top'
-			// 				}
-			// 			}
-			// 		}
-			//   }
+    devServer: {//跨域配置
+      proxy: {
+        '/api':{
+          target:'http://192.168.1.136:9002',
+          changeOrigin: true,
+          pathRewrite:{
+            '^/api':''
+          }
+        }
+      }
+    },
+    resolve: {
+      alias: {
+        'assect':"@/assect",
+        'common':"@/common",
+        'network':"@/network",
+        'views':"@/views",
+      }
+    }
   }
 }

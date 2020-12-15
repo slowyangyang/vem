@@ -19,6 +19,7 @@ import navBar from '@/components/navBar'
 import tabBar from '@/components/tabBar'
 import Search from './children/search'
 import mapContent from './children/mapContent'
+import {getCookie} from 'common/utils'
 export default {
   name:'home',
   components: {
@@ -31,6 +32,8 @@ export default {
     return {
       title:'车辆监控'
     }
+  },
+  mounted(){
   },
   methods: {
    Search(e){

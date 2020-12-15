@@ -3,7 +3,7 @@
     <van-form 
       @submit="onSubmit"
       validate-trigger="onSubmit">
-      <van-field name="radio" label="账户类型">
+      <!-- <van-field name="radio" label="账户类型">
         <template #input>
           <van-radio-group 
             v-model="radio" 
@@ -13,17 +13,17 @@
             <van-radio name="2">按车牌</van-radio>
           </van-radio-group>
         </template>
-    </van-field>
+    </van-field> -->
     <van-field
-      v-model="username"
-      name="用户名"
+      v-model="clientName"
+      name="clientName"
       :label="label"
       :placeholder="placeholder"
       :rules="[{ required: true, message: '请填写用户名' }]"/>
     <van-field
-      v-model="password"
+      v-model="pwd"
       type="password"
-      name="密码"
+      name="pwd"
       label="密码"
       placeholder="密码"
       :rules="[{ required: true, message: '请填写密码'},{validator:passwordLength,message:'请设置6~10位密码'}]"/>
@@ -43,8 +43,8 @@ export default {
     return {
       radio: '1',
       label:'用户名',
-      username: '',
-      password: '',
+      clientName: '',
+      pwd: '',
       placeholder:'用户名',
     }
   },

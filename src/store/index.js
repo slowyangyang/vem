@@ -1,15 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import {getCookie} from 'common/utils'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    isAuthenticated:localStorage.getItem('isAuthenticated') ? localStorage.getItem('isAuthenticated') : ''
+    cookie:getCookie("userToken") ? getCookie("userToken") : ''
   },
   mutations: {
-    saveToken(state,payload){
-      state.isAuthenticated = payload.isAuthenticated
+    saveCookie(state,payload){
+      state.cookie = payload.cookie
     }
   },
   actions: {

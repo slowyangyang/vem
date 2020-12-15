@@ -286,14 +286,14 @@ export default {
 
 <style scopd>
 .search{
-  position: relative;
 }
 .record{
   width: 100%;
-  height: 2rem;
   position: absolute;
-  top: 54px;
+  top: 100px;
   left: 0;
+  right: 0;
+  bottom: 50px;
   z-index: 1;
   background: #fff;
 }
