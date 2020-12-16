@@ -1,7 +1,4 @@
-import { request } from '../request'
+import request from '../request'
 export function getSDK(url){
-  return request({
-    url:'/app/login/getTicket',
-    data:url
-  })
+  return request.post("/app/login/getTicket",url)
 }

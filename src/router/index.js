@@ -27,26 +27,26 @@ const router = new VueRouter({
   routes
 })
 /*路由跳转之前判断*/
-router.beforeEach((to, from, next)=>{
-  let that = this
-  console.log(to);
-  if(to.matched.length == 0){
-    next("/404")
-  }
-  if(to.path != '/login'){
-    if(to.meta.isAuthenticated){
-      const cookie = getCookie("JSESSIONID")
-      if(!cookie) {
-        next()
-      }else{
-        next('login')
-      }
-    }else{
-      next()
-    }
-  }else{
-    next()
-  }
-})
+// router.beforeEach((to, from, next)=>{
+//   let that = this
+//   console.log(to);
+//   if(to.matched.length == 0){
+//     next("/404")
+//   }
+//   if(to.path != '/login'){
+//     if(to.meta.isAuthenticated){
+//       const cookie = getCookie("JSESSIONID")
+//       if(!cookie) {
+//         next()
+//       }else{
+//         next('login')
+//       }
+//     }else{
+//       next()
+//     }
+//   }else{
+//     next()
+//   }
+// })
 
 export default router

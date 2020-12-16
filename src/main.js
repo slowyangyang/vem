@@ -5,8 +5,13 @@ import store from './store'
 import Vant from 'vant';
 import 'vant/lib/index.css';
 import $ from 'jquery'
-
+// import request from 'network/request'
+import { Toast } from 'vant';
+import { Notify } from 'vant';
+Notify.setDefaultOptions({background:'#adadad',duration: 1500})
 Vue.use(Vant);
+Vue.use(Toast);
+Vue.prototype.$Toast = Toast
 // Vue.prototype.$post = request.post
 // Vue.prototype.$get = request.get
 // Vue.prototype.$put = request.put

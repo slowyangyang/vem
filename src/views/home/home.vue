@@ -36,8 +36,7 @@ export default {
     }
   },
   mounted(){
-    console.log(this.$store.getters.emitCookie)
-    this.getJsSdk()
+    // this.getJsSdk()
   },
   methods: {
    Search(e){
@@ -49,7 +48,7 @@ export default {
    getJsSdk(){
     let url = location.href.split("#")[0]
     console.log(url);
-    getSDK().then(res => {
+    getSDK(url).then(res => {
       console.log(res);
     })
    }
@@ -68,5 +67,14 @@ export default {
 }
 .map_box{
   height: calc(100% - 50px - 46px - 54px);
+}
+/deep/.amap-logo{
+  display: none!important;
+}
+/deep/.amap-copyright{
+  display: none!important;
+}
+/deep/.ztree *{
+  font-size: 14px;
 }
 </style>

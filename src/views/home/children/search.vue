@@ -15,10 +15,10 @@
       <ul id="ztree" class="ztree"></ul>
       <div class="cord_bottom">
         <van-row type="flex" gutter="30" justify="center">
-          <van-col >
+          <van-col :span="6">
             <van-button type="info" plain @click="btnCancel">取消</van-button>
           </van-col>
-          <van-col>
+          <van-col :span="6">
             <van-button type="info" @click="btnConfirm">确定</van-button>
           </van-col>
         </van-row>
@@ -312,5 +312,6 @@ export default {
 }
 .van-button--normal{
   height: 30px;
+  width: 100%;
 }
 </style>

@@ -3,29 +3,14 @@
     <nav-bar 
       :title="title"/>
     <select-type @login="login"></select-type>
-    <van-loading color="#1989fa" v-if="showLoading"/>
   </div>
 </template>
 <script>
-// 判断是否为公众号模拟器环境
-	const isWechat = () => {
-		return String(navigator.userAgent.toLowerCase().match(/MicroMessenger/i)) === "micromessenger";
-	}
-
-// 判断公众号截取code
-	const getUrlParam = (name) => {
-		let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-		let r = window.location.search.substr(1).match(reg);
-		if (r != null) {
-			return unescape(r[2]);
-		}
-		return null;
-	}
 import selectType from './children/selectType'
 import navBar from '@/components/navBar'
 import {login, getAppId} from '@/network/login'
 import { mapMutations  } from 'vuex'
-import { GetUrlParam, setCookie, getCookie} from '@/common/utils'
+// import { GetUrlParam, setCookie, getCookie} from '@/common/utils'
 export default {
   name: 'login',
   components: {
@@ -39,36 +24,31 @@ export default {
       APPID :'wxf41afaa220983a6c',
       local:'',
       openId:'',
-      showLoading:false
     }
   },
   created(){
     this.getwxCode()
   },
   methods: {
-    ...mapMutations(['saveCookie']),
+    ...mapMutations(['saveToken']),
     login(value){
       let that = this
       if(this.openID){
         value.openID = this.openID
       }
-      this.showLoading = true
       login(value).then(res => {
         let data = res.data
-        this.showLoading = false
         if(data.status == 0){
-          //设置coolie
-          setCookie("JSESSIONID",data.jwtToken)
-          // 保存cookie
-            that.saveCookie({ JSESSIONID: data.jwtToken})
-            that.$router.push({path:'/home'})
-            this.$notify({ type: 'primary', message: '登录成功',duration: 2000, });
-          }else{
-            this.$notify({ type: 'danger', message: '登陆失败,请重新登录',duration: 1000, });
+          //保存token
+          localStorage.Authorization = JSON.stringify(data.jwtToken)
+          that.saveToken({ token: data.jwtToken})
+          that.$router.push({path:'/home'})
+          this.$notify({ type: 'primary', message: '登录成功'});
+        }else{
+          this.$notify({ type: 'danger', message: '登陆失败,请重新登录'});
         }
       }).catch(err => {
-        this.showLoading = false
-        this.$notify({ type: 'primary', message: '登录超时，请重新登录',duration: 1000, });
+        this.$notify({ type: 'primary', message: '登录超时，请重新登录'});
       })
     },
     getwxCode() { // 非静默授权，第一次有弹框
@@ -77,27 +57,24 @@ export default {
       if(code == null || code === '') {
           window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' +this.APPID + '&redirect_uri=' + encodeURIComponent(this.local) + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
       }else{
-        this.getOpenId(code) //把code传给后台获取用户信息
+        this.getOpenId(code)
       }
     },
     getOpenId (code) { // 通过code获取 openId等用户信息
       let _this = this
-      this.showLoading = true
       getAppId({code}).then((res) => {
         console.log(res);
-        this.showLoading = false
           let data = res.data
           if (data.status == 0) {
             this.$router.push({path:'/home'})
           }else{
             this.openID = data.result
             this.$router.push({path:'/login'})
-            this.$notify({ type: 'warning', message: '请先登录',duration: 1000, });
+            this.$notify({ type: 'primary', message: '请先登录'});
           }
       }).catch((error) => {
-        this.showLoading = false
-        this.$notify({ type: 'warning', message: '请先登录',duration: 1000, });
-         console.log(error)
+        console.log(error);
+        this.$notify({ type: 'danger', message: '验证失败'});
       })
     },
     getUrlParam(name){

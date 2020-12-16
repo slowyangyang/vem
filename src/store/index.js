@@ -6,16 +6,17 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    JSESSIONID:getCookie("userToken") ? getCookie("userToken") : ''
+    // JSESSIONID:getCookie("userToken") ? getCookie("userToken") : ''
+    Authorization:localStorage.Authorization == undefined ? '' : JSON.parse(localStorage.Authorization)
   },
   getters: {
     emitCookie(state){
-      return state.JSESSIONID
+      return state.Authorization
     }
   },
   mutations: {
     saveCookie(state,payload){
-      state.cookie = payload.cookie
+      state.Authorization = payload.token
     }
   },
   actions: {
