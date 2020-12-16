@@ -64,15 +64,15 @@
 <script type="text/javascript">
     var marker, map = new AMap.Map("container", {
         resizeEnable: true,
-        center: [116.397428, 39.90923],
+        center: [106.902139,27.608208],
         zoom: 13
     });
 
     // 实例化点标记
     function addMarker() {
         marker = new AMap.Marker({
-            icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-            position: [116.406315,39.908775],
+            icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+            position: [106.902139,27.608208],
             offset: new AMap.Pixel(-13, -30)
         });
         marker.setMap(map);

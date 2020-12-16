@@ -12,6 +12,7 @@
 
 <script>
 import AMap from 'AMap' // 引入高德地图
+let marker,map
 export default {
   name: "mapContent",
   components: {},
@@ -23,47 +24,19 @@ export default {
     }
   },
   mounted(){
-    this.init()
+    this.$nextTick(()=> {
+
+      this.init()
+    })
   },
   methods: {
     init(){
-      let _this = this
       this.map = new AMap.Map("map", {
-        resizeEnable:true,
-        center: [106.915181,27.712056],
-        zoom: 13
-    });
-    this.marker = new AMap.Marker({
-            icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
-            position: [106.902139,27.608208],
-            offset: new AMap.Pixel(-13, -30),
-            label:{contetn:'健康减肥'}
-        });
-        this.marker.setMap(this.map);
-    
-// 将创建的点标记添加到已有的地图实例：
-// this.map.add(marker);
-      // this.map.plugin('AMap.Geolocation', function() {
-      //   var geolocation = new AMap.Geolocation({
-      //       enableHighAccuracy: true,//是否使用高精度定位，默认:true
-      //       timeout: 10000,          //超过10秒后停止定位，默认：5s
-      //       showButton:false,    //定位按钮的停靠位置
-      //       buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-      //       zoomToAccuracy: true,   //定位成功后是否自动调整地图视野到定位点
-      //       showMarker:true,
-      //   });
-      //   this.map.addControl(geolocation);
-      //   geolocation.getCurrentPosition(function(status,result){
-      //     console.log(status);
-      //       if(status=='complete'){
-      //           onComplete(result)
-      //       }else{
-      //           onError(result)
-      //       }
-      //   });
-      // });
+        resizeEnable: true,
+        center: [106.902139,27.608208],
+        zoom: 16
+      });
     },
-    // 实例化点标记
     // 实例化点标记
     addMarker() {
         if(this.marker) {
