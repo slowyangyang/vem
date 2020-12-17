@@ -5,8 +5,13 @@ import  Monitor from './monitor'
 import Profile from './profile'
 import policePush from './profile/policePush'
 import Login from './login'
-import {getCookie} from 'common/utils'
+import trackBack from './home/trackBack'
 
+// 全局Router异常处理
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => { if (typeof err !== 'undefined')console.log(err) })
+}
 Vue.use(VueRouter)
 
 const routes = [
@@ -18,35 +23,36 @@ const routes = [
   Monitor,
   Profile,
   Login,
-  policePush
+  policePush,
+  trackBack
 ]
 
 const router = new VueRouter({
-  mode:'history',
+  // mode:'history',
   base: process.env.BASE_URL,
   routes
 })
 /*路由跳转之前判断*/
-// router.beforeEach((to, from, next)=>{
-//   let that = this
-//   console.log(to);
-//   if(to.matched.length == 0){
-//     next("/404")
-//   }
-//   if(to.path != '/login'){
-//     if(to.meta.isAuthenticated){
-//       const cookie = getCookie("JSESSIONID")
-//       if(!cookie) {
-//         next()
-//       }else{
-//         next('login')
-//       }
-//     }else{
-//       next()
-//     }
-//   }else{
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next)=>{
+  let that = this
+  console.log(to);
+  if(to.matched.length == 0){
+    next("/404")
+  }
+  if(to.path != '/login'){
+    if(to.meta.isAuthenticated){
+      const token = localStorage.token == undefined ? '' : JSON.parse(localStorage.token)
+      if(token) {
+        next()
+      }else{
+        next('login')
+      }
+    }else{
+      next()
+    }
+  }else{
+    next()
+  }
+})
 
 export default router

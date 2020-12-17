@@ -18,7 +18,7 @@ export function login(data){
   return request.post("/app/login/bind",data)
 }
 
-export function getAppId(code){
+export function isLogin(code){
   return request.post("/app/login/loginByCode",code)
 }
 

@@ -24,7 +24,7 @@ module.exports = {
     },
     resolve: {
       alias: {
-        'assect':"@/assect",
+        'assets':"@/assets",
         'common':"@/common",
         'network':"@/network",
         'views':"@/views",

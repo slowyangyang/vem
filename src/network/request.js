@@ -1,37 +1,3 @@
-// import axios from 'axios'
-// import store from '../store'
-// export function request(config){
-//   const instance = axios.create({
-//     baseURL: 'http://192.168.1.137:9002',
-//     timeout: 5000,
-//   });
-
-//   // 请求拦截
-//   instance.interceptors.request.use(config => {
-//     // 有 token就带上
-//     console.log(store.getters.emitCookie);
-//   if(store.getters.emitCookie) {
-//     config.headers.cookie = store.getters.emitCookie
-//     // axios.defaults.withCredentials = true;
-//   }
-//     return config;
-//   }, error => {
-
-//     return Promise.reject(error);
-//   });
-
-//   // 响应拦截
-//   instance.interceptors.response.use(res => {
-
-//     return res;
-//   }, error => {
-
-//     return Promise.reject(error);
-//   });
-
-//   return instance(config)
-// }
-
 import axios from 'axios'
 import store from '../store'
 import {Toast} from 'vant'
@@ -51,29 +17,10 @@ let FEBS_REQUEST = axios.create({
 
 // 拦截请求
 FEBS_REQUEST.interceptors.request.use((config) => {
-  // let expireTime = store.state.account.expireTime
-  // let now = moment().format('YYYYMMDDHHmmss')
-  // // 让token早10秒种过期，提升“请重新登录”弹窗体验
-  // if (now - expireTime >= -10) {
-  //   Modal.error({
-  //     title: '登录已过期',
-  //     content: '很抱歉，登录已过期，请重新登录',
-  //     okText: '重新登录',
-  //     mask: false,
-  //     onOk: () => {
-  //       return new Promise((resolve, reject) => {
-  //         db.clear()
-  //         location.reload()
-  //       }).catch(function (reason) {
-  //         console.log('catch:', reason)
-  //       })
-  //     }
-  //   })
-  // }
   Toast.loading();
   // 有 token就带上
-  if (store.state.JSESSIONID) {
-    config.headers.Authorization = store.state.Authorization
+  if (store.state.token) {
+    config.headers.Authentication = store.state.token
   }
   return config
 }, (error) => {
@@ -82,6 +29,18 @@ FEBS_REQUEST.interceptors.request.use((config) => {
 
 // 拦截响应
 FEBS_REQUEST.interceptors.response.use((config) => {
+  let token = config.headers['authentication']
+  if(config.status == 200){
+    if(token){  //获取响应头里面的数据
+      localStorage.token = JSON.stringify(token)
+      store.setToken({token:token})
+    }
+    if(config.status == 401){
+      localStorage.removeItem('token')
+      location.reload()
+    }
+  }
+  Toast.clear()
   return config
 }, (error) => {
   if (error.response) {
@@ -105,7 +64,6 @@ const request = {
             }
           })
         } else {
-          console.log(5656);
           result = JSON.stringify(params)
         }
         return result

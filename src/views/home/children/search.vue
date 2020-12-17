@@ -31,6 +31,7 @@ import '@/assets/css/zTreeStyle.css'
 import "@/assets/js/jquery.ztree.core.min.js"
 import "@/assets/js/jquery.ztree.excheck.min.js"
 import "@/assets/js/jquery.ztree.exhide.min.js"
+import { getZNodes } from 'network/home'
 export default {
   name:'search',
   data(){
@@ -139,6 +140,9 @@ export default {
             ]  
     }
   },
+  mounted(){
+    
+  },
   methods: {
     onSearch(e){
       this.$emit('Search',e)
@@ -148,7 +152,7 @@ export default {
     },
     onFocus(){
       this.cordShow = true
-      this.initzTree()
+      this.fetch()
     },
     btnCancel(){
       this.cordShow = false
@@ -214,66 +218,74 @@ export default {
 	        }
 	      }
 	      this.showNodesFun(this.nodesShow, key)
-      },
-      filterzTree(key, nodes, isExpand, isHighLight){
-        console.log(key);
-	      var metaChar = '[\\[\\]\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]'
-		    var rexMeta = new RegExp(metaChar, 'gi')
-        var nameKey = this.treeObj.setting.data.key.name
-	      for (var i =0; i < nodes.length; i++) {
-	        // if (nodes[i] && nodes[i].oldname && nodes[i].oldname.length > 0) {
-	        //   nodes[i][nameKey] = nodes[i].oldname
-	        // }
-	        // this.treeObj.updateNode(nodes[i])
-	        if (key === '') {
-	          this.initzTree()
-	          break
-	        }else {
-	          if(nodes[i][nameKey] && nodes[i][nameKey].toLowerCase().indexOf(key.toLowerCase()) !== -1) {
-	            if (isHighLight) {
-	              var newKeywords = key.replace(rexMeta, (matchStr) => {
-	                return '//' + matchStr
-	              })
-	              nodes[i].oldname = nodes[i][nameKey]
-	              var rexGlobal = new RegExp(newKeywords, 'gi')
-	              nodes[i][nameKey] = nodes[i].oldname.replace(rexGlobal, (originalText) => {
-	                var highLightText =
-	                '<span style="color: whitesmoke;background-color: darkred;">'
-	                + originalText
-	                +'</span>'
-	                return 	highLightText
-	              })
-	              this.treeObj.updateNode(nodes[i])
-              }
-              console.log(nodes[i]);
-	            this.treeObj.showNode(nodes[i])
-	            this.nodesShow.push(nodes[i])
-	          }else {
-              console.log(nodes[i]);
-	            this.treeObj.hideNode(nodes[i])
-	          }
-	        }
-	      }
-      },
-      showNodesFun (nodesShow, key) {
-	      if(key.length > 0){
-	        nodesShow.forEach(node => {
-            var pathOfOne = node.getPath()
-	          if (pathOfOne && pathOfOne.length > 0) {
-	            for (var i = 0; i < pathOfOne.length - 1; i++) {
-                console.log(pathOfOne[i]);
-                  this.treeObj.showNode(pathOfOne[i])
-	              this.treeObj.expandNode(pathOfOne[i], true)
-	            }
-	          }
-	        })
-	      }else {
-	        var rootNodes = this.treeObj.getNodesByParam('level', '0')
-	        rootNodes.forEach(node => {
-	          this.treeObj.expandNode(node, true)
-	        })
-	      }
-	    }
+    },
+    filterzTree(key, nodes, isExpand, isHighLight){
+      console.log(key);
+      var metaChar = '[\\[\\]\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]'
+      var rexMeta = new RegExp(metaChar, 'gi')
+      var nameKey = this.treeObj.setting.data.key.name
+      for (var i =0; i < nodes.length; i++) {
+        // if (nodes[i] && nodes[i].oldname && nodes[i].oldname.length > 0) {
+        //   nodes[i][nameKey] = nodes[i].oldname
+        // }
+        // this.treeObj.updateNode(nodes[i])
+        if (key === '') {
+          this.initzTree()
+          break
+        }else {
+          if(nodes[i][nameKey] && nodes[i][nameKey].toLowerCase().indexOf(key.toLowerCase()) !== -1) {
+            if (isHighLight) {
+              var newKeywords = key.replace(rexMeta, (matchStr) => {
+                return '//' + matchStr
+              })
+              nodes[i].oldname = nodes[i][nameKey]
+              var rexGlobal = new RegExp(newKeywords, 'gi')
+              nodes[i][nameKey] = nodes[i].oldname.replace(rexGlobal, (originalText) => {
+                var highLightText =
+                '<span style="color: whitesmoke;background-color: darkred;">'
+                + originalText
+                +'</span>'
+                return 	highLightText
+              })
+              this.treeObj.updateNode(nodes[i])
+            }
+            console.log(nodes[i]);
+            this.treeObj.showNode(nodes[i])
+            this.nodesShow.push(nodes[i])
+          }else {
+            console.log(nodes[i]);
+            this.treeObj.hideNode(nodes[i])
+          }
+        }
+      }
+    },
+    showNodesFun (nodesShow, key) {
+      if(key.length > 0){
+        nodesShow.forEach(node => {
+          var pathOfOne = node.getPath()
+          if (pathOfOne && pathOfOne.length > 0) {
+            for (var i = 0; i < pathOfOne.length - 1; i++) {
+              console.log(pathOfOne[i]);
+                this.treeObj.showNode(pathOfOne[i])
+              this.treeObj.expandNode(pathOfOne[i], true)
+            }
+          }
+        })
+      }else {
+        var rootNodes = this.treeObj.getNodesByParam('level', '0')
+        rootNodes.forEach(node => {
+          this.treeObj.expandNode(node, true)
+        })
+      }
+    },
+    fetch(){
+      getZNodes().then(res => {
+        console.log(res);
+        this.initzTree()
+      }).catch(err => {
+        console.log(err);
+      })
+    }
   },
   watch: {
     value(newV) {
