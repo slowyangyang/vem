@@ -5,5 +5,8 @@ export function getSDK(url){
 
 /** Search**/ 
 export function getZNodes(){
-  return request.post("/app/gpsRealData/provideShowData")
+  return request.get("/app/gpsRealData/provideShowData")
+}
+export function queryLocal(bvId){
+  return request.get("/app/vehicle/provideBVehicleInfo?bvId="+bvId.join(','))
 }

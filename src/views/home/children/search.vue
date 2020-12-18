@@ -8,6 +8,7 @@
         @search="onSearch"
         @cancel="onCancel"
         @focus="onFocus"
+        @blur="onBlur"
         ref="search"/>
     </form>
     <!-- 搜索记录 -->
@@ -31,13 +32,14 @@ import '@/assets/css/zTreeStyle.css'
 import "@/assets/js/jquery.ztree.core.min.js"
 import "@/assets/js/jquery.ztree.excheck.min.js"
 import "@/assets/js/jquery.ztree.exhide.min.js"
-import { getZNodes } from 'network/home'
+import { getZNodes, queryLocal } from 'network/home'
 export default {
   name:'search',
   data(){
     return {
       value:'',
       cordShow:false,
+      isfetch:true,
       treeObj:null,
       noData: false,
       treeId: 'ztree',
@@ -51,25 +53,25 @@ export default {
           nocheckInherit: false ,
           chkboxType: { "Y": "ps", "N": "ps" }
           },
-          data: { 
-            simpleData: { 
-              enable: true,
-              idKey: 'id',
-	            pIdKey: 'pId',
-	            rootPId: 0 
-            } 
-          },
-          callback: {
-            onCollapse:this.onCollapse,
-            onExpand:this.onExpand,
-            onClick:this.onClick,
-            onCheck:this.onCheck
-          },
-          view: {
-            showIcon: false,
-            nameIsHTML: true,            
-	          selectedMulti: false
-          },
+        data: { 
+          simpleData: { 
+            enable: true,
+            idKey: 'id',
+            pIdKey: 'pId',
+            rootPId: 0 
+          } 
+        },
+        callback: {
+          onClick: this.zTreeOnClick,
+          onCollapse:this.Collapse,
+          onExpand:this.Expand
+
+			  },
+        view: {
+          showIcon: false,
+          nameIsHTML: true,            
+          selectedMulti: false
+        },
       },
       zNodes:[
               { id:1,pid:0,name:"大良造菜单",open:true,nocheck:false,
@@ -137,11 +139,12 @@ export default {
                     },
                 ]
               }
-            ]  
+      ],
+      i:0
     }
   },
   mounted(){
-    
+    this.initzTree()
   },
   methods: {
     onSearch(e){
@@ -151,14 +154,22 @@ export default {
       this.$emit('Cancel',e)
     },
     onFocus(){
-      this.cordShow = true
-      this.fetch()
+      if(this.isfetch){
+        this.isfetch = false
+        this.cordShow = true
+        // this.fetch()
+      }
+    },
+    onBlur(){
+      return false
     },
     btnCancel(){
       this.cordShow = false
+      this.isfetch = true
     },
     btnConfirm(){
       let str = ''
+      let bvId = []
       //获取选中的项
       let checked = this.treeObj.getChangeCheckedNodes(true)
       //筛选叶子节点
@@ -169,26 +180,43 @@ export default {
       str = str.substr(0,str.length-1)
       this.value = str
       this.cordShow = false
+      this.isfetch = true
+      if(this.i == 0){
+        this.i = 1
+        bvId = []
+        bvId.push('2000')
+      }
+      console.log(this.i);
+        bvId.push('2001')
+      queryLocal(bvId).then(res => {
+        console.log(res);
+        let data = res.data
+        if(data.status == 0){
+          // let field = JSON.parse(JSON.parse(data.result.field).field)
+          this.$Bus.$emit('getlocal',data.result.vehicle)
+        }else{
+          this.$notify({ type: 'primary', message: data.msg});
+        }
+      })
     },
-    onCollapse(event, treeId, treeNode){
-
+    Collapse(event, treeId, treeNode){
+      //被折叠
     },
-    onExpand(event, treeId, treeNode){
-
+    Expand(event, treeId, treeNode){
+      //展开时
     },
     initzTree(){
       $.fn.zTree.init($("#"+this.treeId), this.setting, this.zNodes).expandAll(false);
       this.treeObj = $.fn.zTree.getZTreeObj("ztree")
       var nodes = this.treeObj.getNodes()
       this.allNodes = this.queryFun(nodes)
-      console.log(this.allNodes);
       this.nodes = []
     },
-    onClick(event, treeId, treeNode){
+    zTreeOnClick(event, treeId, treeNode){
       this.treeObj.checkNode(treeNode,'',true)
     },
     onCheck(event, treeId, treeNode){
-      
+      console.log(3333444);
     },
     queryFun(node) {
       for (var i in node) {
@@ -253,7 +281,6 @@ export default {
             this.treeObj.showNode(nodes[i])
             this.nodesShow.push(nodes[i])
           }else {
-            console.log(nodes[i]);
             this.treeObj.hideNode(nodes[i])
           }
         }
@@ -285,7 +312,8 @@ export default {
       }).catch(err => {
         console.log(err);
       })
-    }
+    },
+    
   },
   watch: {
     value(newV) {

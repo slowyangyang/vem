@@ -9,6 +9,8 @@ import $ from 'jquery'
 import { Toast } from 'vant';
 import { Notify } from 'vant';
 Notify.setDefaultOptions({background:'#adadad',duration: 1500})
+// 注册全局事件总线
+Vue.prototype.$Bus = new Vue()
 Vue.use(Vant);
 Vue.use(Toast);
 Vue.prototype.$Toast = Toast

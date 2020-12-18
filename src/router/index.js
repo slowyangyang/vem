@@ -6,6 +6,7 @@ import Profile from './profile'
 import policePush from './profile/policePush'
 import Login from './login'
 import trackBack from './home/trackBack'
+import db from 'common/localstorage'
 
 // 全局Router异常处理
 const originalPush = VueRouter.prototype.push
@@ -35,17 +36,17 @@ const router = new VueRouter({
 /*路由跳转之前判断*/
 router.beforeEach((to, from, next)=>{
   let that = this
-  console.log(to);
+  // console.log(to);
   if(to.matched.length == 0){
     next("/404")
   }
   if(to.path != '/login'){
     if(to.meta.isAuthenticated){
-      const token = localStorage.token == undefined ? '' : JSON.parse(localStorage.token)
+      let token = db.get('token')
       if(token) {
         next()
       }else{
-        next('login')
+        next('/login')
       }
     }else{
       next()

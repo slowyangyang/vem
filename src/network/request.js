@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '../store'
-import {Toast} from 'vant'
+import {Toast,Notify} from 'vant'
+import db from 'common/localstorage'
 Toast.setDefaultOptions({
   forbidClick: true,
   duration:0
@@ -30,15 +31,17 @@ FEBS_REQUEST.interceptors.request.use((config) => {
 // 拦截响应
 FEBS_REQUEST.interceptors.response.use((config) => {
   let token = config.headers['authentication']
+  let TOKEN_INVALID = config.data
   if(config.status == 200){
     if(token){  //获取响应头里面的数据
-      localStorage.token = JSON.stringify(token)
-      store.setToken({token:token})
+      db.save("token",token)
+      store.setToken(token)
     }
-    if(config.status == 401){
-      localStorage.removeItem('token')
-      location.reload()
-    }
+  }
+  if(config.data.status == 5){
+    localStorage.removeItem('token')
+    location.reload()
+    Notify({ type: 'primary', message: '登录已过期，请重新登录'});
   }
   Toast.clear()
   return config

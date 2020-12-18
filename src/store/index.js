@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {getCookie} from 'common/utils'
+import db from 'common/localstorage'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     // JSESSIONID:getCookie("userToken") ? getCookie("userToken") : ''
-    token:localStorage.token == undefined ? '' : JSON.parse(localStorage.token)
+    token:db.get("token")
   },
   getters: {
     emitCookie(state){
@@ -16,7 +16,7 @@ export default new Vuex.Store({
   },
   mutations: {
     saveToken(state,payload){
-      state.token = payload.token
+      state.token = payload
     }
   },
   actions: {

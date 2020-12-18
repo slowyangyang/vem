@@ -42,8 +42,8 @@ export default {
         console.log(data);
         if(data.status == 0){
           //保存token
-          localStorage.token = JSON.stringify(data.jwtToken)
-          that.saveToken({ token: data.jwtToken})
+          // localStorage.token = JSON.stringify(data.jwtToken)
+          // this.saveToken(data.jwtToken)
           that.$router.push({path:'/home'})
           this.$notify({ type: 'primary', message: '登录成功'});
         }else{
@@ -78,7 +78,7 @@ export default {
           }
       }).catch((error) => {
         console.log(error);
-        this.$notify({ type: 'danger', message: 'code验证失败'});
+        this.$notify({ type: 'danger', message: '身份验证失败'});
       })
     },
     getUrlParam(name){
