@@ -25,7 +25,7 @@ const routes = [
   Profile,
   Login,
   policePush,
-  trackBack
+  trackBack,
 ]
 
 const router = new VueRouter({

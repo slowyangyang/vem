@@ -3,10 +3,10 @@
     <div id="map">
 
     </div>
-    <button @click='addMarker' style="position: absolute;
+    <!-- <button @click='addMarker' style="position: absolute;
     top: 150px;
     right: 20px;
-    z-index: 100;">添加标记</button>
+    z-index: 100;">添加标记</button> -->
   </div>
 </template>
 
@@ -41,7 +41,7 @@ export default {
     }
   },
   created(){
-    console.log(3);
+    console.log();
   },
   activated(){
     console.log(3);
@@ -96,8 +96,8 @@ export default {
           },
           extData:{
             plate:val.plateNo,
-            speed:val.speed,
-            time:val.time
+            speed:val.velocity,
+            time:val.sendTime
           }
         });
         //添加窗体
@@ -114,19 +114,21 @@ export default {
       let _this = this
       let data = e.target.getExtData()
       console.log(data);
+      console.log(3);
       let content = `<p class='w_title' style='text-align: center;font-size: 14px;font-weight:bold;margin-bottom:0.05rem'>${data.plate}</p>
                       <div class='w_content' style='margin-bottom:0.05rem'><p style='margin-bottom:0.05rem'>速度：${data.speed}</p><p>时间：${data.time}</p></div>
                       <div class='w_tools' style='display:flex;justify-content:center;color:#4696e6'><div style='margin-right:0.2rem' onclick="playBack()">轨迹</div><div>详情</div></div>` 
       let infowindow = new AMap.InfoWindow({
         autoMove:true,
-        offset: new AMap.Pixel(0, -30),
+        offset: new AMap.Pixel(0, -10),
         content:content,
-        showShadow:true
+        showShadow:true,
+        closeWhenClickMap:true
       })
       infowindow.open(this.map,e.target.getPosition())
       //轨迹回放
       window.playBack = ()=>{
-        _this.$router.push({path:'/trackBack'})
+        _this.$router.push({path:'/trackBack?plateNo='+data.plate})
       }
       
     },

@@ -10,6 +10,7 @@ import selectType from './children/selectType'
 import navBar from '@/components/navBar'
 import {login, isLogin} from '@/network/login'
 import { mapMutations  } from 'vuex'
+import db from 'common/localstorage'
 // import { GetUrlParam, setCookie, getCookie} from '@/common/utils'
 export default {
   name: 'login',
@@ -30,7 +31,7 @@ export default {
     this.getwxCode()
   },
   methods: {
-    ...mapMutations(['saveToken']),
+    ...mapMutations(['saveUser']),
     login(value){
       let that = this
       if(this.openId){
@@ -40,15 +41,15 @@ export default {
       login(value).then(res => {
         let data = res.data
         console.log(data);
-        if(data.status == 0){
-          //保存token
-          // localStorage.token = JSON.stringify(data.jwtToken)
-          // this.saveToken(data.jwtToken)
-          that.$router.push({path:'/home'})
-          this.$notify({ type: 'primary', message: '登录成功'});
-        }else{
-          this.$notify({ type: 'danger', message: '登陆失败,请重新登录'});
-        }
+        // if(data.status == 0){
+        //   //保存用户信息
+        //   saveUser(data.result)
+        //   db.save("USER",data.result)
+        //   that.$router.push({path:'/home'})
+        //   this.$notify({ type: 'primary', message: '登录成功'});
+        // }else{
+        //   this.$notify({ type: 'danger', message: '登陆失败,请重新登录'});
+        // }
       }).catch(err => {
         this.$notify({ type: 'primary', message: '登录超时，请重新登录'});
       })

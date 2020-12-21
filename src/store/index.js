@@ -7,7 +7,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // JSESSIONID:getCookie("userToken") ? getCookie("userToken") : ''
-    token:db.get("token")
+    token:db.get("token"),
+    user_info:db.get("USER")
   },
   getters: {
     emitCookie(state){
@@ -17,6 +18,9 @@ export default new Vuex.Store({
   mutations: {
     saveToken(state,payload){
       state.token = payload
+    },
+    saveUser(state,payload){
+      state.user_info = payload
     }
   },
   actions: {

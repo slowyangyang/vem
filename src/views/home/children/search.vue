@@ -181,13 +181,7 @@ export default {
       this.value = str
       this.cordShow = false
       this.isfetch = true
-      if(this.i == 0){
-        this.i = 1
-        bvId = []
-        bvId.push('2000')
-      }
-      console.log(this.i);
-        bvId.push('2001')
+      bvId.push('2001')
       queryLocal(bvId).then(res => {
         console.log(res);
         let data = res.data
@@ -216,7 +210,6 @@ export default {
       this.treeObj.checkNode(treeNode,'',true)
     },
     onCheck(event, treeId, treeNode){
-      console.log(3333444);
     },
     queryFun(node) {
       for (var i in node) {
@@ -334,7 +327,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 50px;
-  z-index: 1;
+  z-index: 111;
   background: #fff;
 }
 .cord_bottom{

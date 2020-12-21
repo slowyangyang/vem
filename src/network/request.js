@@ -40,7 +40,8 @@ FEBS_REQUEST.interceptors.response.use((config) => {
   }
   if(config.data.status == 5){
     localStorage.removeItem('token')
-    location.reload()
+    localStorage.removeItem('USER')
+    // location.reload()
     Notify({ type: 'primary', message: '登录已过期，请重新登录'});
   }
   Toast.clear()

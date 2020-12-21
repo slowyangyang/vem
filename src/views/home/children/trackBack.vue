@@ -22,6 +22,8 @@
 import NavBar from '../../../components/navBar.vue'
 import tabBar from '../../../components/tabBar.vue'
 import AMap from 'AMap' // 引入高德地图
+import { backPlay } from 'network/home'
+import pako from 'pako'
 export default {
   components: { tabBar,NavBar },
   name: "trackBack",
@@ -30,15 +32,16 @@ export default {
       title:'轨迹回放',
       map:null,
       center:null,
-      lineArr :[[116.478935,39.997761],[116.478939,39.997825],[116.478912,39.998549],[116.478912,39.998549],[116.478998,39.998555],[116.478998,39.998555],[116.479282,39.99856],[116.479658,39.998528],[116.480151,39.998453],[116.480784,39.998302],[116.480784,39.998302],[116.481149,39.998184],[116.481573,39.997997],[116.481863,39.997846],[116.482072,39.997718],[116.482362,39.997718],[116.483633,39.998935],[116.48367,39.998968],[116.484648,39.999861]],
+      result:[],
+      lineArr :[],
       marker:null,
       polyline:null,
       passedPolyline:null,
-      i:0
+      baseUrl: process.env.BASE_URL
     }
   },
   mounted(){
-    this.init()
+    this.fetch()
     // this.addmarker()
   },
   methods: {
@@ -49,16 +52,31 @@ export default {
         center: _this.center,
         zoom: 15
       });
-      this.marker = new AMap.Marker({
-        position: _this.lineArr[0],
-        icon: "https://webapi.amap.com/images/car.png",
-        offset: new AMap.Pixel(-26, -13),
+      this.marker = []
+      this.marker.push(new AMap.Marker({
+        position:[_this.lineArr[0][0],_this.lineArr[0][1]] || [],
+        icon: _this.IconType(0,40,30),
+        offset: new AMap.Pixel(-15, -25),
+        angle:-90,
+        zIndex:20
+      }))
+      this.marker.push(new AMap.Marker({
+        position:[_this.lineArr[0][0],_this.lineArr[0][1]] || [],
+        icon: _this.IconType(2,28,20),
+        offset: new AMap.Pixel(-20, -9),
         autoRotation: true,
         angle:-90,
-      });
+      }))
+      this.marker.push(new AMap.Marker({
+        position: [_this.lineArr[_this.lineArr.length-1][0],_this.lineArr[_this.lineArr.length-1][1]] || [],
+        icon: _this.IconType(1,40,30),
+        offset: new AMap.Pixel(-25,-25),
+        autoRotation: true,
+        zIndex:20
+      }))
       
       //更新地图中心点
-      this.map.setCenter(_this.lineArr[0])
+      this.map.setCenter(_this.lineArr ?  [_this.lineArr[0][0],_this.lineArr[0][1]] : [])
       // //在地图中添加marker
       this.map.add(_this.marker);
       //途径
@@ -81,43 +99,46 @@ export default {
         strokeWeight: 6,      //线宽
         // strokeStyle: "solid"  //线样式
       });
-      this.marker.on('moving', function (e) {
-        console.log(e);
+      this.marker[1].on('moving', function (e) {
         passedPolyline.setPath(e.passedPath);
         // 设置地图中心点
         _this.map.setCenter(e.target.getPosition())
-        // 设置旋转角
-        // _this.map.setRotation(-e.target.getOrientation())
       });
-
+      this.map.setFitView()
     },
-    addmarker(){
+    IconType(index,w,h){
       let _this = this
-      this.marker = new AMap.Marker({
-        map: _this.map,
-        position: this.lineArr[0],
-        icon: "https://webapi.amap.com/images/car.png",
-        offset: new AMap.Pixel(-26, -13),
-        autoRotation: true,
-        angle:-90,
-      });
-      this.marker.on('moving', function (e) {
-        _this.passedPolylines.setPath(e.passedPath);
-      });
+      let imgUrl
+      if(index === 0 ){
+        imgUrl = this.baseUrl+"startmarker.png"
+      }else if(index === 1){
+        imgUrl = this.baseUrl+"endmarker.png"
+      }else if(index == 2){
+        imgUrl = "https://webapi.amap.com/images/car.png"
+      }
+      let Icon = new AMap.Icon({
+        // 图标尺寸
+        size: new AMap.Size(w, h),
+        // 图标的取图地址
+        image: imgUrl,
+        // 图标所用图片大小
+        imageSize: new AMap.Size(w, h),
+      })
+      return Icon
     },
-     // 绘制轨迹
-     Polylines(){
-       let _this = this
-      this.polyline = new AMap.Polyline({
-          map: _this.map,
-          path: _this.lineArr,
-          showDir:true,
-          strokeColor: "#28F",  //线颜色
-          // strokeOpacity: 1,     //线透明度
-          strokeWeight: 6,      //线宽
-          // strokeStyle: "solid"  //线样式
-      });
-     },
+    // 绘制轨迹
+    Polylines(){
+      let _this = this
+    this.polyline = new AMap.Polyline({
+        map: _this.map,
+        path: _this.lineArr,
+        showDir:true,
+        strokeColor: "#28F",  //线颜色
+        // strokeOpacity: 1,     //线透明度
+        strokeWeight: 6,      //线宽
+        // strokeStyle: "solid"  //线样式
+    });
+    },
     passedPolylines(){
       let _this = this
       this.passedPolyline = new AMap.Polyline({
@@ -131,20 +152,97 @@ export default {
     },
     startAnimation () {
       let _this = this
-        this.marker.moveAlong(_this.lineArr, 200);
+        this.marker[1].moveAlong(_this.lineArr, 3000);
     },
-
     pauseAnimation () {
-        this.marker.pauseMove();
+        this.marker[1].pauseMove();
     },
-
     resumeAnimation () {
-        this.marker.resumeMove();
+        this.marker[1].resumeMove();
     },
-
     stopAnimation () {
-        this.marker.stopMove();
-    }
+        this.marker[1].stopMove();
+    },
+    fetch(){
+      let data = this.$route.query
+      let plateno = data.plateNo
+      let sTime = this.getNowDate("00:00:00")
+      let eTime = this.getNowDate("23:59:59")
+      console.log(sTime,eTime,plateno);
+      backPlay(plateno,sTime,eTime).then(res => {
+        if(res.data.status == 0){
+          let data = res.data.result.carHistory
+          this.result = this.unzip(data)
+          console.log(this.lineArr);
+          console.log(this.result);
+          if(this.result.length !== 0){
+            this.lineArr = []
+            this.result.forEach(val => {
+              this.lineArr.push([val.longitude,val.latitude])
+            })
+            //初始化地图
+            this.init()
+          }else{
+             this.$notify({ type: 'primary', message: '暂无历史轨迹'});
+             //初始化地图
+            this.init()
+          }
+          
+        }
+      })
+    },
+    getNowDate(t){
+      let date = new Date()
+      let y = date.getFullYear()
+      let m = date.getMonth()+1
+      let d = date.getDate()
+      return y+'-'+m+'-'+d+' '+t
+    },
+    // 解析
+    unzip(key) {
+      let charData = key.split('').map(item => item.charCodeAt(0))
+      let array = pako.inflate(charData)
+      // 如果字符太大，会导致内存溢出报错，这里使用分片处理
+      return this.Utf8ArrayToStr(array)
+    },
+    Utf8ArrayToStr(array) {
+      var out, i, len, c;
+      var char2, char3;
+      out = "";
+      len = array.length;
+      i = 0;
+      while (i < len) {
+        c = array[i++];
+        switch (c >> 4) {
+          case 0:
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+            // 0xxxxxxx
+            out += String.fromCharCode(c);
+            break;
+          case 12:
+          case 13:
+            // 110x xxxx   10xx xxxx
+            char2 = array[i++];
+            out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+            break;
+          case 14:
+            // 1110 xxxx  10xx xxxx  10xx xxxx
+            char2 = array[i++];
+            char3 = array[i++];
+            out += String.fromCharCode(((c & 0x0F) << 12) |
+              ((char2 & 0x3F) << 6) |
+              ((char3 & 0x3F) << 0));
+            break;
+        }
+      }
+      return JSON.parse(out)
+    },
   }
 }
     
@@ -173,10 +271,10 @@ export default {
 /deep/.amap-copyright{
   display: none!important;
 }
-/deep/.amap-icon{
-  width: 50px;
-  height: 30px;
-}
+/* /deep/.amap-icon{
+  width: 32px;
+  height: 20px;
+} */
 .input-card{
   position: fixed;
   bottom: 0;
