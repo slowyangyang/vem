@@ -21,17 +21,20 @@ export default {
       center:[106.902139,27.608208],
       map:null,
       markers:[{
-        center:[106.911736,27.620252],
+        longitude:'106.911736',
+        latitude:'27.620252',
         plate:"川AA4156",
         speed:'40',
         time:'2020-12-17 14:11:22'
       },{
-        center:[106.904402,27.617172],
+        longitude:'106.904402',
+        latitude:'27.617172',
         plate:"川AA4156",
         speed:'45',
         time:'2020-12-15 14:23:56'
       },{
-        center:[106.916665,27.617158],
+        longitude:'106.916665',
+        latitude:'27.617158',
         plate:"川AA4156",
         speed:'38',
         time:'2020-12-14 14:11:22'

@@ -6,6 +6,7 @@ import Profile from './profile'
 import policePush from './profile/policePush'
 import Login from './login'
 import trackBack from './home/trackBack'
+import copy from 'views/home/children/copy'
 import db from 'common/localstorage'
 
 // 全局Router异常处理
@@ -26,6 +27,11 @@ const routes = [
   Login,
   policePush,
   trackBack,
+  {
+    path:'/copy',
+    name:'copy',
+    component:copy
+  }
 ]
 
 const router = new VueRouter({
@@ -34,26 +40,26 @@ const router = new VueRouter({
   routes
 })
 /*路由跳转之前判断*/
-router.beforeEach((to, from, next)=>{
-  let that = this
-  // console.log(to);
-  if(to.matched.length == 0){
-    next("/404")
-  }
-  if(to.path != '/login'){
-    if(to.meta.isAuthenticated){
-      let token = db.get('token')
-      if(token) {
-        next()
-      }else{
-        next('/login')
-      }
-    }else{
-      next()
-    }
-  }else{
-    next()
-  }
-})
+// router.beforeEach((to, from, next)=>{
+//   let that = this
+//   // console.log(to);
+//   if(to.matched.length == 0){
+//     next("/404")
+//   }
+//   if(to.path != '/login'){
+//     if(to.meta.isAuthenticated){
+//       let token = db.get('token')
+//       if(token) {
+//         next()
+//       }else{
+//         next('/login')
+//       }
+//     }else{
+//       next()
+//     }
+//   }else{
+//     next()
+//   }
+// })
 
 export default router
