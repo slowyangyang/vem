@@ -37,19 +37,18 @@ export default {
       if(this.openId){
         value.openId = this.openId
       }
-      console.log(value);
       login(value).then(res => {
         let data = res.data
         console.log(data);
-        // if(data.status == 0){
-        //   //保存用户信息
-        //   saveUser(data.result)
-        //   db.save("USER",data.result)
-        //   that.$router.push({path:'/home'})
-        //   this.$notify({ type: 'primary', message: '登录成功'});
-        // }else{
-        //   this.$notify({ type: 'danger', message: '登陆失败,请重新登录'});
-        // }
+        if(data.status == 0){
+          //保存用户信息
+          this.saveUser(data.result)
+          db.save("USER",data.result)
+          that.$router.push({path:'/home'})
+          this.$notify({ type: 'primary', message: '登录成功'});
+        }else{
+          this.$notify({ type: 'danger', message: '登陆失败,请重新登录'});
+        }
       }).catch(err => {
         this.$notify({ type: 'primary', message: '登录超时，请重新登录'});
       })
@@ -68,9 +67,12 @@ export default {
     getOpenId (code) { // 通过code获取 openId等用户信息
       let _this = this
       isLogin({code}).then((res) => {
-        console.log(res);
+        // console.log(res);
           let data = res.data
           if (data.status == 0) {
+            //保存用户信息
+            this.saveUser(data.result)
+            db.save("USER",data.result)
             this.$router.push({path:'/home'})
           }else{
             this.openId = data.result

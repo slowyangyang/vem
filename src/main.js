@@ -8,6 +8,7 @@ import $ from 'jquery'
 // import request from 'network/request'
 import { Toast } from 'vant';
 import { Notify } from 'vant';
+//全局消息提示
 Notify.setDefaultOptions({background:'#adadad',duration: 1500})
 // 注册全局事件总线
 Vue.prototype.$Bus = new Vue()

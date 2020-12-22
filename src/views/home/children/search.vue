@@ -181,7 +181,7 @@ export default {
       this.value = str
       this.cordShow = false
       this.isfetch = true
-      bvId.push('2001')
+      bvId.push('2000')
       queryLocal(bvId).then(res => {
         console.log(res);
         let data = res.data

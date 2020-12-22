@@ -35,13 +35,13 @@ FEBS_REQUEST.interceptors.response.use((config) => {
   if(config.status == 200){
     if(token){  //获取响应头里面的数据
       db.save("token",token)
-      store.setToken(token)
+      store.commit({type:'saveToken',token})
     }
   }
   if(config.data.status == 5){
-    localStorage.removeItem('token')
-    localStorage.removeItem('USER')
-    // location.reload()
+    db.remove('token')
+    db.remove('USER')
+    location.reload()
     Notify({ type: 'primary', message: '登录已过期，请重新登录'});
   }
   Toast.clear()
