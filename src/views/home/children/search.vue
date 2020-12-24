@@ -161,6 +161,7 @@ export default {
         this.isfetch = false
         this.cordShow = true
         // this.fetch(0)
+
       }
     },
     onBlur(){
@@ -353,13 +354,21 @@ export default {
           }
         })
       },30000)
-    }
+    },
     
   },
   watch: {
     value(newV) {
       console.log(newV);
       this.searchFun(newV, false, false)
+    },
+    cordShow(newVal){
+      console.log(newVal);
+      if(newVal){
+        $(".van-tabbar--fixed").hide()
+      }else{
+        $(".van-tabbar--fixed").show()
+      }
     }
   },
 }

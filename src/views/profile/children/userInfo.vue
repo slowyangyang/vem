@@ -31,8 +31,8 @@ export default {
   justify-content: center;
 }
 .van-card__thumb{
-  width: 60px;
-  height: 60px;
+  /* width: 60px;
+  height: 60px; */
 }
 
 

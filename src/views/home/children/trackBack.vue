@@ -9,7 +9,7 @@
        <van-col :span="3" v-if="isPlay && palyStayus === 0"><van-icon name="play-circle-o" :size="24" @click="navgControl('start')"/></van-col>
         <van-col :span="3" v-if="isPlay && palyStayus === 1"><van-icon name="play-circle-o" :size="24" @click="navgControl('resume')"/></van-col>
         <van-col :span="3" v-if="!isPlay"><van-icon name="pause-circle-o" :size="24" @click="navgControl('pause')"/></van-col>
-        <van-col :span="17"><van-slider v-model="value" button-size="20"  @change="onChange" @input="onInput"/></van-col>
+        <van-col :span="17"><van-slider v-model="sliderVal" button-size="20"  @change="onChange" @input="onInput"/></van-col>
         <van-col :span="1">
           <van-popover
             v-model="showPopover"
@@ -26,6 +26,7 @@
         <van-col :span="3"><van-icon name="setting-o" :size="24" @click="openSetting"/></van-col>
       </van-row>
     </div>
+    <!-- 参数查询 -->
     <van-overlay :show="show">
       <div class="wrapper" @click.stop>
         <div class="block">
@@ -88,6 +89,12 @@
         </div>
       </div>
     </van-overlay>
+    <!-- 轨迹详情 -->
+    <div class="trackInfo" v-if="infoShow">
+      <p>{{trackInfo.location}}</p>
+      <p><span>速度：</span>{{trackInfo.velocity}}</p>
+      <p><span>时间：</span>{{trackInfo.setTime}}</p>
+    </div>
   </div>
 </template>
 
@@ -97,6 +104,7 @@ let lineArr = []
 for(let i = 0;i<path.length;i++){
   lineArr.push([path[i].lng,path[i].lat])
 }
+console.log(lineArr);
 let columns1=[]
 let columns2=[]
 for(let i = 1; i < 80; i++){
@@ -110,6 +118,8 @@ import tabBar from '../../../components/tabBar.vue'
 import AMap from 'AMap' // 引入高德地图
 import { trackQuery } from 'network/home'
 import pako from 'pako'
+import loginVue from '../../login/login.vue';
+import db from 'common/localstorage'
 export default {
   components: { tabBar,NavBar },
   name: "trackBack",
@@ -216,7 +226,9 @@ export default {
       signMarker: null,
       currentPoint: null,
       timeValue: '',
-      trackData: []
+      trackData: [],
+      trackInfo:{},
+      infoShow:false
     }
   },
   mounted(){
@@ -260,10 +272,6 @@ export default {
             },
             //hover每一个轨迹点，展示内容
             getHoverTitle: function(pathData, pathIndex, pointIndex) {
-              /*if (pointIndex >= 0) {
-              return pathData.name + '，点：' + pointIndex + '/' + pathData.path.length;
-            }
-            return pathData.name + '，点数量' + pathData.path.length;*/
               return ''
             },
             //自定义样式，可设置巡航器样式，巡航轨迹样式，巡航轨迹点击、hover等不同状态下的样式，不设置则用默认样式，详情请参考api文档 renderOptions:{}
@@ -285,17 +293,19 @@ export default {
             console.log('图片加载失败！')
           }
           //对第一条线路（即索引 0）创建一个巡航器
-          let image = PathSimplifier.Render.Canvas.getImageContent('/t_car.png', onload, onerror)
+          let image = PathSimplifier.Render.Canvas.getImageContent('/car.png', onload, onerror)
           that.navgtr = that.pathSimplifierIns.createPathNavigator(0, {
             loop: false, //循环播放
             speed: that.navgtrSpeed, //巡航速度，单位千米/小时
             pathNavigatorStyle: {
-              width: 26,
-              height: 52,
+              width: 40,
+              height: 25,
               //使用图片
               content: image, // 自定义巡航样式
               strokeStyle: null,
               fillStyle: null,
+              autoRotate:true,
+              initRotateDegree:-90,
               //经过路径的样式
               pathLinePassedStyle: {
                 lineWidth: 6,
@@ -316,6 +326,8 @@ export default {
             that.navgtr._movedDist = this.getMovedDistance() - that.navgtr._startDist
           })
           that.navgtr.on('move', function(data, position) {
+            //更新地图中心点,视野跟随
+            that.map.setCenter(lineArr[position.dataItem.pointIndex])
             that.isCursorAtPathEnd = false
             let idx = position.dataItem.pointIndex //走到了第几个点
             let tail = position.tail //至下一个节点的比例位置
@@ -323,6 +335,7 @@ export default {
             let len = position.dataItem.pathData.path.length
             // 设置当前点位
             that.currentPoint = that.actualList[idx]
+            that.velocity = pointDataList[idx]
             // 打开信息窗体
             let content = [
               '<div style="padding: 5px;">',
@@ -353,7 +366,7 @@ export default {
           that.initSimplifier = false
       })
     },
-    initMarker(){
+    initMarkers(){
       let _this = this
       this.marker = []
       this.marker.push(new AMap.Marker({
@@ -404,7 +417,6 @@ export default {
     },
     //手动拖动进度条过程中实时触发：移动车辆，定位车辆回放位置
     onInput(e){
-      console.log(22);
       // 先改为播放状态
       if (this.palyStayus === 0) {
         this.navgControl('start')
@@ -476,6 +488,8 @@ export default {
         resizeEnable: true, 
         zoom: 15
       })
+      console.log(this.lineArr);
+      // this.map.setCenter(this.lineArr ?  [this.lineArr[0][0],this.lineArr[0][1]] : [])
     },
     initMarker() {
       // 引入Marker,绘制点标记
@@ -497,11 +511,11 @@ export default {
     },
     // 控制播放按钮
     navgControl(type) {
-      console.log(this.navgtr);
       if(!this.navgtr || !type) {
         return
       }
       if(type === 'start' || type === 'resume') {
+        this.infoShow = true
         this.isPlay = false
         this.palyStayus = 2
         // 如果已经到了终点，重新定位坐标
@@ -522,6 +536,7 @@ export default {
       this.isPlay = true // 播放图标
       this.palyStayus = 0 // 继续状态
       this.sliderVal = 0; // 进度条清0
+      this.times = 2
     },
     openSetting(){
       this.show = true
@@ -697,12 +712,11 @@ export default {
     },
   }
 }
-    
 </script>
 
 <style scoped>
 .trackBack{
-  height: 100%;
+  height: calc(100% - 46px);
 }
 /deep/.van-nav-bar__title{
   color: #fff;
@@ -758,7 +772,7 @@ export default {
 }
 .block {
   width: 3rem;
-  height: 3rem;
+  height: 2.6rem;
   background-color: #fff;
   position: relative;
 }
@@ -782,5 +796,21 @@ export default {
 }
 .w_bottom > div:first-child{
   border-right: 0.01rem solid #dce0e4;
+}
+.trackInfo{
+  width: 100%;
+  height:1.2rem;
+  color: #fff;
+  background: rgba(0,0,0,0.5);
+  padding: 0.1rem;
+  position: absolute;
+  top: 46px;
+  left: 0;
+}
+.trackInfo > p{
+  margin-bottom: 0.1rem;
+}
+.trackInfo > p > span{
+  font-weight: bold;
 }
 </style>

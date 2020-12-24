@@ -119,8 +119,8 @@ export default {
       console.log(data);
       console.log(3);
       let content = `<p class='w_title' style='text-align: center;font-size: 14px;font-weight:bold;margin-bottom:0.05rem'>${data.plate}</p>
-                      <div class='w_content' style='margin-bottom:0.05rem'><p style='margin-bottom:0.05rem'>速度：${data.speed}</p><p>时间：${data.time}</p></div>
-                      <div class='w_tools' style='display:flex;justify-content:center;color:#4696e6'><div style='margin-right:0.2rem' onclick="playBack()">轨迹</div><div>详情</div></div>` 
+                      <div class='w_content' style='margin-bottom:0.05rem'><p style='margin-bottom:0.05rem'>速度：${data.speed} (km/h)</p><p>时间：${data.time}</p></div>
+                      <div class='w_tools' style='display:flex;justify-content:center;color:#4696e6'><div style='' onclick="playBack()">轨迹回放</div></div>` 
       let infowindow = new AMap.InfoWindow({
         autoMove:true,
         offset: new AMap.Pixel(0, -10),
@@ -132,6 +132,10 @@ export default {
       //轨迹回放
       window.playBack = ()=>{
         _this.$router.push({path:'/trackBack?plateNo='+data.plate})
+      }
+      //详情
+      window.detail = ()=>{
+        
       }
       
     },
