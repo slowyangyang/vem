@@ -4,19 +4,11 @@
       :title="title" 
       :left-arrow="true"/>
     <div id="map"></div>
-    <!-- <div class="input-card">
-      <div class="input-item">
-          <input type="button" class="btn" value="开始动画" id="start" @click="startAnimation()"/>
-          <input type="button" class="btn" value="暂停动画" id="pause" @click="pauseAnimation()"/>
-      </div>
-      <div class="input-item">
-          <input type="button" class="btn" value="继续动画" id="resume" @click="resumeAnimationpauseAnimation()"/>
-          <input type="button" class="btn" value="停止动画" id="stop" @click="stopAnimation()"/>
-      </div>
-    </div> -->
     <div class="control">
       <van-row type="flex" justify="space-between" align="center" gutter="10">
-        <van-col :span="3"><van-icon :name="playing ? 'play-circle-o': 'pause-circle-o'" :size="24" @click="startPlay" /></van-col>
+       <van-col :span="3" v-if="isPlay && palyStayus === 0"><van-icon name="play-circle-o" :size="24" @click="navgControl('start')"/></van-col>
+        <van-col :span="3" v-if="isPlay && palyStayus === 1"><van-icon name="play-circle-o" :size="24" @click="navgControl('resume')"/></van-col>
+        <van-col :span="3" v-if="!isPlay"><van-icon name="pause-circle-o" :size="24" @click="navgControl('pause')"/></van-col>
         <van-col :span="17"><van-slider v-model="value" button-size="20"  @change="onChange" @input="onInput"/></van-col>
         <van-col :span="1">
           <van-popover
@@ -27,7 +19,7 @@
             placement="top"
             @select="changeSpeed">
             <template #reference>
-              <van-button size="samll">x{{speed}}</van-button>
+              <van-button size="samll">x{{times}}</van-button>
             </template>
           </van-popover>
         </van-col>
@@ -100,6 +92,11 @@
 </template>
 
 <script>
+let path = [{"lng":123.390381,"lat":41.929537,"speed":0},{"lng":123.390315,"lat":41.929736,"speed":13},{"lng":123.390331,"lat":41.930286,"speed":19},{"lng":123.390365,"lat":41.930819,"speed":25},{"lng":123.390381,"lat":41.931436,"speed":25},{"lng":123.390398,"lat":41.932069,"speed":24},{"lng":123.390416,"lat":41.932686,"speed":24},{"lng":123.390482,"lat":41.933203,"speed":20},{"lng":123.390582,"lat":41.933269,"speed":19},{"lng":123.390716,"lat":41.933287,"speed":19},{"lng":123.391433,"lat":41.933337,"speed":24},{"lng":123.392268,"lat":41.933305,"speed":26},{"lng":123.392402,"lat":41.933238,"speed":26},{"lng":123.392652,"lat":41.933071,"speed":24},{"lng":123.392819,"lat":41.932788,"speed":26},{"lng":123.393085,"lat":41.932205,"speed":30},{"lng":123.393536,"lat":41.931422,"speed":35},{"lng":123.393803,"lat":41.930956,"speed":39},{"lng":123.39407,"lat":41.930472,"speed":39},{"lng":123.394287,"lat":41.930006,"speed":41},{"lng":123.394504,"lat":41.929506,"speed":43},{"lng":123.394704,"lat":41.928972,"speed":44},{"lng":123.394921,"lat":41.928423,"speed":46},{"lng":123.395137,"lat":41.927857,"speed":46},{"lng":123.395354,"lat":41.92729,"speed":48},{"lng":123.395588,"lat":41.926707,"speed":46},{"lng":123.395822,"lat":41.926123,"speed":49},{"lng":123.396055,"lat":41.92554,"speed":47},{"lng":123.396338,"lat":41.924991,"speed":44},{"lng":123.396639,"lat":41.924508,"speed":41},{"lng":123.396939,"lat":41.924091,"speed":35},{"lng":123.397506,"lat":41.923391,"speed":28},{"lng":123.397974,"lat":41.922825,"speed":22},{"lng":123.398407,"lat":41.922375,"speed":13},{"lng":123.398841,"lat":41.921942,"speed":15},{"lng":123.399241,"lat":41.921525,"speed":24},{"lng":123.399791,"lat":41.920975,"speed":31},{"lng":123.400159,"lat":41.92061,"speed":35},{"lng":123.400876,"lat":41.919876,"speed":37},{"lng":123.401277,"lat":41.91946,"speed":41},{"lng":123.401693,"lat":41.919026,"speed":41},{"lng":123.40211,"lat":41.918576,"speed":43},{"lng":123.402527,"lat":41.918127,"speed":41},{"lng":123.402911,"lat":41.917727,"speed":37},{"lng":123.403361,"lat":41.917077,"speed":30},{"lng":123.403378,"lat":41.916877,"speed":23},{"lng":123.403261,"lat":41.916811,"speed":23},{"lng":123.402994,"lat":41.916761,"speed":26},{"lng":123.402043,"lat":41.916676,"speed":37},{"lng":123.401342,"lat":41.916643,"speed":41},{"lng":123.400659,"lat":41.91661,"speed":37},{"lng":123.400041,"lat":41.916593,"speed":33},{"lng":123.39899,"lat":41.916542,"speed":28},{"lng":123.398123,"lat":41.916509,"speed":22},{"lng":123.397839,"lat":41.916475,"speed":14},{"lng":123.397806,"lat":41.916325,"speed":15},{"lng":123.397939,"lat":41.915509,"speed":26},{"lng":123.397973,"lat":41.914675,"speed":31},{"lng":123.398073,"lat":41.913825,"speed":33},{"lng":123.398123,"lat":41.913375,"speed":35},{"lng":123.398173,"lat":41.912892,"speed":39},{"lng":123.398206,"lat":41.912425,"speed":34},{"lng":123.398289,"lat":41.911592,"speed":38},{"lng":123.398356,"lat":41.911075,"speed":43},{"lng":123.398389,"lat":41.910526,"speed":41},{"lng":123.398439,"lat":41.91001,"speed":37},{"lng":123.398488,"lat":41.909543,"speed":35},{"lng":123.398538,"lat":41.90876,"speed":28},{"lng":123.398555,"lat":41.90806,"speed":31},{"lng":123.398555,"lat":41.907143,"speed":41},{"lng":123.398572,"lat":41.90666,"speed":39},{"lng":123.398555,"lat":41.905793,"speed":31},{"lng":123.398555,"lat":41.905226,"speed":13},{"lng":123.398555,"lat":41.904743,"speed":22},{"lng":123.398572,"lat":41.904093,"speed":30},{"lng":123.398572,"lat":41.90326,"speed":33},{"lng":123.398588,"lat":41.90251,"speed":26},{"lng":123.398554,"lat":41.901893,"speed":22},{"lng":123.398504,"lat":41.90171,"speed":16},{"lng":123.398421,"lat":41.90166,"speed":16},{"lng":123.398121,"lat":41.90171,"speed":15},{"lng":123.397403,"lat":41.901793,"speed":26},{"lng":123.396285,"lat":41.901875,"speed":35},{"lng":123.395668,"lat":41.901892,"speed":37},{"lng":123.394983,"lat":41.901941,"speed":41},{"lng":123.394232,"lat":41.901991,"speed":44},{"lng":123.393516,"lat":41.902023,"speed":41},{"lng":123.392831,"lat":41.902073,"speed":39},{"lng":123.392197,"lat":41.902072,"speed":35},{"lng":123.391062,"lat":41.902072,"speed":31},{"lng":123.390094,"lat":41.902071,"speed":26},{"lng":123.38941,"lat":41.902087,"speed":17},{"lng":123.388675,"lat":41.90207,"speed":26},{"lng":123.387857,"lat":41.902069,"speed":20},{"lng":123.387189,"lat":41.902036,"speed":17},{"lng":123.386471,"lat":41.902002,"speed":18},{"lng":123.386371,"lat":41.901935,"speed":22},{"lng":123.386338,"lat":41.901818,"speed":20},{"lng":123.386371,"lat":41.901652,"speed":20},{"lng":123.386671,"lat":41.901185,"speed":0},{"lng":123.386939,"lat":41.900785,"speed":22},{"lng":123.387389,"lat":41.900169,"speed":33},{"lng":123.387657,"lat":41.899736,"speed":39},{"lng":123.38794,"lat":41.899286,"speed":39},{"lng":123.388257,"lat":41.898787,"speed":44},{"lng":123.388591,"lat":41.898254,"speed":44},{"lng":123.388924,"lat":41.897754,"speed":43},{"lng":123.389209,"lat":41.897287,"speed":39},{"lng":123.389442,"lat":41.896855,"speed":37},{"lng":123.38991,"lat":41.896055,"speed":32},{"lng":123.390193,"lat":41.895605,"speed":7},{"lng":123.390376,"lat":41.895355,"speed":13},{"lng":123.390694,"lat":41.894889,"speed":24},{"lng":123.391161,"lat":41.894172,"speed":31},{"lng":123.391595,"lat":41.893489,"speed":26},{"lng":123.391978,"lat":41.892957,"speed":15},{"lng":123.392346,"lat":41.89254,"speed":26},{"lng":123.392863,"lat":41.891907,"speed":37},{"lng":123.393214,"lat":41.891458,"speed":41},{"lng":123.393597,"lat":41.890958,"speed":50},{"lng":123.394081,"lat":41.890358,"speed":59},{"lng":123.394648,"lat":41.889709,"speed":63},{"lng":123.395182,"lat":41.889042,"speed":59},{"lng":123.395616,"lat":41.888425,"speed":55},{"lng":123.396033,"lat":41.887909,"speed":44},{"lng":123.3964,"lat":41.887476,"speed":35},{"lng":123.396884,"lat":41.886826,"speed":28},{"lng":123.397051,"lat":41.886593,"speed":24},{"lng":123.397284,"lat":41.88651,"speed":10},{"lng":123.398119,"lat":41.886594,"speed":11},{"lng":123.39877,"lat":41.886677,"speed":26},{"lng":123.399821,"lat":41.886727,"speed":35},{"lng":123.400437,"lat":41.886744,"speed":37},{"lng":123.401105,"lat":41.886778,"speed":42},{"lng":123.401788,"lat":41.886795,"speed":41},{"lng":123.402423,"lat":41.886828,"speed":36},{"lng":123.403457,"lat":41.886878,"speed":30},{"lng":123.404507,"lat":41.886929,"speed":30},{"lng":123.404925,"lat":41.886929,"speed":21},{"lng":123.404975,"lat":41.886896,"speed":21},{"lng":123.405041,"lat":41.886813,"speed":19},{"lng":123.405108,"lat":41.886446,"speed":24},{"lng":123.405208,"lat":41.885679,"speed":35},{"lng":123.405308,"lat":41.884813,"speed":30},{"lng":123.405391,"lat":41.884079,"speed":30},{"lng":123.405491,"lat":41.883213,"speed":33},{"lng":123.405591,"lat":41.882479,"speed":17},{"lng":123.405658,"lat":41.881863,"speed":27},{"lng":123.405674,"lat":41.881096,"speed":33},{"lng":123.40569,"lat":41.880629,"speed":39},{"lng":123.405724,"lat":41.880113,"speed":37},{"lng":123.405757,"lat":41.879613,"speed":41},{"lng":123.40579,"lat":41.879046,"speed":44},{"lng":123.405824,"lat":41.878479,"speed":44},{"lng":123.405857,"lat":41.877929,"speed":43},{"lng":123.405874,"lat":41.877429,"speed":39},{"lng":123.405924,"lat":41.876746,"speed":19},{"lng":123.405957,"lat":41.876279,"speed":11},{"lng":123.406024,"lat":41.875729,"speed":24},{"lng":123.406107,"lat":41.874946,"speed":35},{"lng":123.406157,"lat":41.874463,"speed":37},{"lng":123.40619,"lat":41.874013,"speed":37},{"lng":123.40624,"lat":41.873496,"speed":43},{"lng":123.40629,"lat":41.872929,"speed":50}];
+let lineArr = []
+for(let i = 0;i<path.length;i++){
+  lineArr.push([path[i].lng,path[i].lat])
+}
 let columns1=[]
 let columns2=[]
 for(let i = 1; i < 80; i++){
@@ -148,27 +145,213 @@ export default {
       showPopover:false,
       actions:[{ text: '1' },{ text: '2' },{ text: '3' },{ text: '4' },{ text: '5' }],
       REPLAY_INDEX:0,
-      baseUrl: process.env.BASE_URL
+      baseUrl: process.env.BASE_URL,
+      // 信息窗体
+      infoWindow: null,
+      // 巡航轨迹
+      AMap: null,
+      PathSimplifier: null,
+      isPlay: true,
+      sliderVal: 0, // 进度条
+      times: 2, // 倍速
+      maxSpeed: 32, // 最高倍速
+      navgtrSpeed: 3000, // 速度
+      isMinSpeed: true,
+      isMaxSpeed: false,
+      navgtr: null,
+      pathSimplifierIns: null,
+      actualList: [],
+      defaultRenderOptions: {
+        renderAllPointsIfNumberBelow: -1, // 描绘路径点，如不需要设为-1
+        pathTolerance: 2,
+        keyPointTolerance: 0,
+        pathLineStyle: {
+          lineWidth: 6,
+          strokeStyle: '#409eff',
+          borderWidth: 1,
+          borderStyle: '#eeeeee',
+          dirArrowStyle: false
+        },
+        pathLineHoverStyle: {
+          lineWidth: 6,
+          strokeStyle: '#ff0000',
+          borderWidth: 1,
+          borderStyle: '#cccccc',
+          dirArrowStyle: false
+        },
+        dirArrowStyle: {
+          stepSpace: 30,
+          strokeStyle: "#ffffff",
+          lineWidth: 2
+        },
+        pathLineSelectedStyle: {
+          lineWidth: 6,
+          strokeStyle: '#409eff',
+          borderWidth: 1,
+          borderStyle: '#cccccc',
+          dirArrowStyle: true
+        },
+        keyPointStyle: {
+          radius: 0,
+          fillStyle: 'rgba(8, 126, 196, 1)',
+          lineWidth: 1,
+          strokeStyle: '#eeeeee'
+        },
+        keyPointHoverStyle: {
+          radius: 0,
+          fillStyle: 'rgba(0, 0, 0, 0)',
+          lineWidth: 2,
+          strokeStyle: '#ffa500'
+        },
+        keyPointOnSelectedPathLineStyle: {
+          radius: 0,
+          fillStyle: 'rgba(8, 126, 196, 1)',
+          lineWidth: 2,
+          strokeStyle: '#eeeeee'
+        }
+      },
+      isCursorAtPathEnd: false,
+      palyStayus: 0, //0->未开始  1->行驶中  2->暂停
+      value: 0,  // 进度条初始化
+      signMarker: null,
+      currentPoint: null,
+      timeValue: '',
+      trackData: []
     }
   },
   mounted(){
-    this.fetch()
-    // this.addmarker()
+    // this.fetch()
+    this.Init()
   },
   methods: {
-    init(){
-      let _this = this
-      this.map = new AMap.Map("map", {
-        resizeEnable: true,
-        center: _this.center,
-        zoom: 15
-      });
-      // //初始化marker
-      this.initMarker()
-      // //画线
-      this.Polylines()
-      // //地图zoom自适应
-      this.map.setFitView()
+    // 初始化巡航组件实例
+    initPathSimplifier() {
+      let that = this
+      AMapUI.load(['ui/misc/PathSimplifier'], (PathSimplifier) => {
+        if (!PathSimplifier.supportCanvas) {
+          alert('当前环境不支持 Canvas！')
+          return
+        }
+        that.initSimplifier = true
+        that.signMarker.setLabel({})
+        if (window.pathSimplifierIns && that.pathSimplifierIns) {
+          //通过该方法清空上次传入的轨迹
+          that.pathSimplifierIns.setData([]);
+        }
+        // TODO
+        // let linArray = this.lineArr
+        // let pointDataList = this.result
+        let linArray = lineArr
+        let pointDataList = path
+        // 初始化坐标点
+        if (linArray.length > 0) {
+          that.signMarker.show()
+          that.signMarker.setPosition(linArray[0])
+
+          that.actualList = linArray
+
+          //创建一个巡航轨迹路线
+          that.pathSimplifierIns = new PathSimplifier({
+            zIndex: 100,//地图层级，
+            map: this.map, //所属的地图实例
+            //巡航路线轨迹列表
+            getPath: (pathData, pathIndex) => {
+              return pathData.path
+            },
+            //hover每一个轨迹点，展示内容
+            getHoverTitle: function(pathData, pathIndex, pointIndex) {
+              /*if (pointIndex >= 0) {
+              return pathData.name + '，点：' + pointIndex + '/' + pathData.path.length;
+            }
+            return pathData.name + '，点数量' + pathData.path.length;*/
+              return ''
+            },
+            //自定义样式，可设置巡航器样式，巡航轨迹样式，巡航轨迹点击、hover等不同状态下的样式，不设置则用默认样式，详情请参考api文档 renderOptions:{}
+            //绘制路线节点
+            renderOptions: that.defaultRenderOptions
+          })
+          window.pathSimplifierIns = that.pathSimplifierIns
+          //设置数据
+          that.pathSimplifierIns.setData([{
+            name: '轨迹路线',
+            path: that.actualList
+          }])
+          that.pathSimplifierIns.setSelectedPathIndex(0)
+
+          function onload() {
+            that.pathSimplifierIns.renderLater()
+          }
+          function onerror(e) {
+            console.log('图片加载失败！')
+          }
+          //对第一条线路（即索引 0）创建一个巡航器
+          let image = PathSimplifier.Render.Canvas.getImageContent('/t_car.png', onload, onerror)
+          that.navgtr = that.pathSimplifierIns.createPathNavigator(0, {
+            loop: false, //循环播放
+            speed: that.navgtrSpeed, //巡航速度，单位千米/小时
+            pathNavigatorStyle: {
+              width: 26,
+              height: 52,
+              //使用图片
+              content: image, // 自定义巡航样式
+              strokeStyle: null,
+              fillStyle: null,
+              //经过路径的样式
+              pathLinePassedStyle: {
+                lineWidth: 6,
+                strokeStyle: '#69f81e',
+                dirArrowStyle: {
+                  stepSpace: 15,
+                  strokeStyle: '#FFF'
+                }
+              }
+            }
+          })
+          that.navgtr.on('start resume', function() {
+            that.navgtr._startTime = Date.now()
+            that.navgtr._startDist = this.getMovedDistance()
+          })
+          that.navgtr.on('stop pause', function() {
+            that.navgtr._movedTime = Date.now() - that.navgtr._startTime
+            that.navgtr._movedDist = this.getMovedDistance() - that.navgtr._startDist
+          })
+          that.navgtr.on('move', function(data, position) {
+            that.isCursorAtPathEnd = false
+            let idx = position.dataItem.pointIndex //走到了第几个点
+            let tail = position.tail //至下一个节点的比例位置
+            let totalIdx = idx + tail
+            let len = position.dataItem.pathData.path.length
+            // 设置当前点位
+            that.currentPoint = that.actualList[idx]
+            // 打开信息窗体
+            let content = [
+              '<div style="padding: 5px;">',
+              '<div>接收时间 : ' + pointDataList[idx].sendTime + '</div>',
+              '<div>速&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度 : ' + pointDataList[idx].velocity + '(km/h)</div>',
+              '<div>经&nbsp;&nbsp;纬&nbsp;&nbsp;度 : ' + pointDataList[idx].longitude + ',' + pointDataList[idx].latitude + '</div>',
+              '</div>'
+            ]
+            that.infoWindow.setContent(content.join(''))
+            that.infoWindow.open(that.map, that.actualList[idx])
+            if(idx < len - 1) {
+              that.navgtr.setSpeed(that.navgtrSpeed * that.times)
+            }
+            // 进度条实时展示tail
+            !that.isOnSlider && (that.sliderVal = (totalIdx / len) * 100)
+            // 如果到头了，回到初始状态
+            if (that.navgtr.isCursorAtPathEnd()) {
+              that.isCursorAtPathEnd = true
+              that.initPlayBox()
+            }
+          })
+          // 加载完成
+          that.beforeInit = false
+          }else {
+            that.signMarker.hide()
+            that.signMarker.setLabel({})
+          }
+          that.initSimplifier = false
+      })
     },
     initMarker(){
       let _this = this
@@ -219,74 +402,34 @@ export default {
       })
       return Icon
     },
-    // 绘制轨迹
-    Polylines(){
-      let _this = this
-      let polyline = new AMap.Polyline({
-        map: _this.map,
-        path: _this.lineArr,
-        showDir:true,
-        strokeColor: "#28F",  //线颜色
-        // strokeOpacity: 1,     //线透明度
-        strokeWeight: 6,      //线宽
-        // strokeStyle: "solid"  //线样式
-      });
-    },
-    passedPolylines(){
-      let _this = this
-      this.passedPolyline = new AMap.Polyline({
-        map: _this.map,
-        // path: _this.lineArr,
-        strokeColor: "#AF5",  //线颜色
-        // strokeOpacity: 1,     //线透明度
-        strokeWeight: 6,      //线宽
-        // strokeStyle: "solid"  //线样式
-      });
-    },
-    watchMarker(){
-      
-    },
-    startAnimation () {
-      let _this = this
-      let speed = this.speed*500000
-      //计算需要回放的GPS路径
-      var replayPath = [];
-      for (var i = this.REPLAY_INDEX; i < this.result.length; i++) {
-        replayPath.push(new AMap.LngLat(_this.result[i].longitude,_this.result[i].latitude));
+    //手动拖动进度条过程中实时触发：移动车辆，定位车辆回放位置
+    onInput(e){
+      console.log(22);
+      // 先改为播放状态
+      if (this.palyStayus === 0) {
+        this.navgControl('start')
+        this.navgControl('pause')
       }
-      console.log(replayPath.length);
-      this.marker[1].moveAlong(replayPath, speed,function (k) {
-          return k
-      }, false);
-      //添加监听事件： 车辆移动的时候，更新速度窗体位置，记录当前回放百分比
-      AMap.event.addListener(_this.marker[1], 'moving', function (e) {
-        // 设置地图中心点,跟随视野
-        _this.map.setCenter(e.target.getPosition())
-        var lastLocation = e.passedPath.length;
-        console.log(lastLocation,_this.result.length);
-        _this.value = Math.round((lastLocation+_this.REPLAY_INDEX) / _this.lineArr.length * 100)
-        //播放完毕，回到初始位置
-        if(_this.value == 100){
-          console.log('结束');
-          _this.initPlay()
-        }
-      });
+      // 移动巡航器
+      let newVal = typeof(newVal)==='number' ? val : this.sliderVal
+      let num = parseInt((newVal / 100) * this.actualList.length);
+      let decimal = String((newVal / 100) * this.actualList.length).split('.')[1]||0
+      this.navgtr.moveToPoint(num, Number('0.'+decimal));
+      this.pathSimplifierIns.renderLater();
     },
-    pauseAnimation () {
-        this.marker[1].pauseMove();
+    //当进度条拖动结束
+    onChange(e){
+      if (this.currentPoint) {
+        let timeout = setTimeout(() => {
+          clearTimeout(timeout)
+          this.map.setCenter(this.currentPoint)
+        }, 0)
+      }
     },
-    resumeAnimation () {
-        this.marker[1].resumeMove();
-    },
-    stopAnimation () {
-        this.marker[1].stopMove();
-    },
-    initPlay(){
-      this.value = 0
-      this.speed = 1
-      this.playing = true
-      this.REPLAY_INDEX = 0
-      this.init()
+    // 改变倍速
+    changeSpeed(e) {
+      let sp = e.text
+      this.times = e.text;
     },
     fetch(){
       let _this = this
@@ -305,51 +448,80 @@ export default {
               this.lineArr.push([val.longitude,val.latitude])
             })
             console.log(this.lineArr);
-            //初始化地图
-            this.init()
+            this.Init()
             this.$notify({ type: 'primary', message: '请开始播放'});
           }else{
              this.$notify({ type: 'primary', message: '暂无历史数据'});
-             //初始化地图
-            this.init()
+             // 初始化地图
+              this.initMap()
           }
         }
+      }).catch(err=>{
+        // 初始化地图
+        this.initMap()
       })
     },
-    //手动拖动进度条过程中实时触发：移动车辆，定位车辆回放位置
-    onInput(e){
-      
-        var currentIndex = Math.round(this.lineArr.length * e / 100);
-        var vehicleLocation = this.lineArr[currentIndex];
-        this.marker[1].setPosition(new AMap.LngLat(vehicleLocation.lng, vehicleLocation.lat));
-      
+    Init(){
+      // 初始化地图
+      this.initMap()
+      // 初始化点位
+      this.initMarker()
+      // 初始化信息窗体
+      this.initInfoWindow()
+      this.initPathSimplifier()
     },
-    //当进度条拖动结束
-    onChange(e){
-      this.REPLAY_INDEX = Math.round(this.lineArr.length * e / 100);
-      console.log(this.REPLAY_INDEX);
-      this.startAnimation()
+    // 初始化地图
+    initMap() {
+      this.map = new AMap.Map('map', {
+        resizeEnable: true, 
+        zoom: 15
+      })
     },
-    //开始播放
-    startPlay(){
-      if(this.playing){
-        if(this.value !== 0){
-          this.resumeAnimation()
-        }else{
-          this.startAnimation()
-        }
-          this.playing = false
-      }else{
-        this.pauseAnimation()
-        this.playing = true
+    initMarker() {
+      // 引入Marker,绘制点标记
+      this.signMarker = new AMap.Marker({
+        map: this.map,
+        offset: new AMap.Pixel(-4, -4),
+        visible: false,
+        content: '<div style="text-align:center; background-color: hsla(180, 100%, 50%, 0.9); height: 10px; width: 10px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>'
+      })
+    },
+    initInfoWindow() {
+      // 创建 infoWindow 实例
+      this.infoWindow = new AMap.InfoWindow({
+        anchor: 'bottom-center',
+        autoMove: false,
+        offset: new AMap.Pixel(0, -20),
+        content: ''  //传入 dom 对象，或者 html 字符串
+      })
+    },
+    // 控制播放按钮
+    navgControl(type) {
+      console.log(this.navgtr);
+      if(!this.navgtr || !type) {
+        return
       }
+      if(type === 'start' || type === 'resume') {
+        this.isPlay = false
+        this.palyStayus = 2
+        // 如果已经到了终点，重新定位坐标
+        if(this.isCursorAtPathEnd && this.actualList.length > 0) {
+          this.map.setCenter(this.actualList[0])
+        }
+      }else if (type === 'pause') {
+        this.isPlay = true
+        this.palyStayus = 1
+      }
+      this.navgtr[type]()
     },
-    //改变速率
-    changeSpeed(action,index){
-      this.speed = action.text
-      let _this = this
-      this.REPLAY_INDEX = Math.round(this.lineArr.length * this.value / 100);
-      this.startAnimation();
+    // 初始化播放器状态
+    initPlayBox() {
+      // 暂停
+      this.navgControl('pause')
+      this.playIcon = 'start';
+      this.isPlay = true // 播放图标
+      this.palyStayus = 0 // 继续状态
+      this.sliderVal = 0; // 进度条清0
     },
     openSetting(){
       this.show = true
@@ -574,6 +746,9 @@ export default {
 }
 /deep/.van-col{
   text-align: center;
+}
+/deep/.van-cell--clickable{
+  padding: 7px 16px;
 }
 .wrapper {
   display: flex;

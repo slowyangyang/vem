@@ -33,6 +33,7 @@ import "@/assets/js/jquery.ztree.core.min.js"
 import "@/assets/js/jquery.ztree.excheck.min.js"
 import "@/assets/js/jquery.ztree.exhide.min.js"
 import { getZNodes, queryLocal } from 'network/home'
+import axios from 'axios'
 export default {
   name:'search',
   data(){
@@ -140,6 +141,8 @@ export default {
                 ]
               }
       ],
+      bvId:[],
+      timer:null,
       i:0
     }
   },
@@ -157,7 +160,7 @@ export default {
       if(this.isfetch){
         this.isfetch = false
         this.cordShow = true
-        // this.fetch()
+        // this.fetch(0)
       }
     },
     onBlur(){
@@ -169,25 +172,43 @@ export default {
     },
     btnConfirm(){
       let str = ''
-      let bvId = []
+      this.bvId = []
       //获取选中的项
       let checked = this.treeObj.getChangeCheckedNodes(true)
       //筛选叶子节点
       checked = checked.filter(item => !item.children)
       checked.forEach(val => {
         str+=val.name+','
+        this.bvId.push(val.id)
       })
       str = str.substr(0,str.length-1)
       this.value = str
       this.cordShow = false
       this.isfetch = true
-      bvId.push('2000')
+      this.bvId.push('2000')
+      this.queryCar(this.bvId)
+      // queryLocal(bvId).then(res => {
+      //   console.log(res);
+      //   let data = res.data
+      //   if(data.status == 0){
+      //     // let field = JSON.parse(JSON.parse(data.result.field).field)
+      //     this.$Bus.$emit('getlocal',data.result.vehicle)
+      //   }else{
+      //     this.$notify({ type: 'primary', message: data.msg});
+      //   }
+      // })
+    },
+    queryCar(bvId){
       queryLocal(bvId).then(res => {
         console.log(res);
         let data = res.data
         if(data.status == 0){
           // let field = JSON.parse(JSON.parse(data.result.field).field)
           this.$Bus.$emit('getlocal',data.result.vehicle)
+          if(this.timer){
+            clearInterval(this.timer)
+          }
+          this.polling()
         }else{
           this.$notify({ type: 'primary', message: data.msg});
         }
@@ -298,14 +319,41 @@ export default {
         })
       }
     },
-    fetch(){
-      getZNodes().then(res => {
+    fetch(treeCode){
+      getZNodes(treeCode).then(res => {
         console.log(res);
-        this.initzTree()
+        let data = res.data
+        if(data.status == 0){
+          let org = data.result[0].data[0].org
+          org.forEac(val => {
+            
+          })
+
+          console.log(this.zNodes);
+          this.initzTree()
+        }
       }).catch(err => {
         console.log(err);
       })
     },
+    polling(){
+      // if(this.timer){
+      //   clearInterval(this.timer)
+      // }
+      this.timer = setInterval(()=> {
+        this.$Toast.clear()
+        queryLocal(this.bvId).then(res => {
+          console.log(res);
+          let data = res.data
+          if(data.status == 0){
+            // let field = JSON.parse(JSON.parse(data.result.field).field)
+            this.$Bus.$emit('getlocal',data.result.vehicle)
+          }else{
+            this.$notify({ type: 'primary', message: data.msg});
+          }
+        })
+      },30000)
+    }
     
   },
   watch: {

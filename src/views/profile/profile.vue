@@ -15,6 +15,7 @@ import navBar from '@/components/navBar'
 import tabBar from '@/components/tabBar'
 import UserInfo from './children/userInfo'
 import MyPushList from './children/myPushList.vue'
+import db from 'common/localstorage'
 export default {
   name: "profile",
   data() {
@@ -32,7 +33,10 @@ export default {
     UserInfo,
     MyPushList
   },
-  methods: {}
+  methods: {},
+  mounted(){
+    this.infoList = db.get("USER")
+  }
 }
 </script>
 

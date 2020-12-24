@@ -225,7 +225,7 @@ export default {
         _this.map.setCenter(e.target.getPosition())
         //marker走过点的长度
         var lastLocation = e.passedPath.length;
-        console.log(lastLocation,_this.lineArr.length)
+        console.log(lastLocation,_this.lineArr.length,new Date())
         //设置进度条
         _this.value = Math.round((lastLocation+_this.REPLAY_INDEX) / _this.lineArr.length * 100)
         //播放完毕，回到初始位置

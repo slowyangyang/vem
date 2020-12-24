@@ -1,8 +1,8 @@
 <template>
   <div class="userInfo">
     <van-card
-  :desc="infoList.title"
-  :thumb="infoList.thumb"/>
+  :desc="infoList.nickname"
+  :thumb="infoList.headimgurl"/>
   </div>
 </template>
 

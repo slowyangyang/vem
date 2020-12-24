@@ -4,8 +4,8 @@ export function getSDK(url){
 }
 
 /**获取节点**/
-export function getZNodes(){
-  return request.get("/app/track/provideShowData")
+export function getZNodes(treeCode=""){
+  return request.get("/app/track/provideShowData?treeCode="+treeCode)
 }
 /** Search**/ 
 export function queryLocal(bvId){
