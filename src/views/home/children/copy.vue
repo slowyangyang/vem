@@ -101,7 +101,8 @@
 
 <script>
 let lineArr = [{"lng":123.390381,"lat":41.929537,"speed":0},{"lng":123.390315,"lat":41.929736,"speed":13},{"lng":123.390331,"lat":41.930286,"speed":19},{"lng":123.390365,"lat":41.930819,"speed":25},{"lng":123.390381,"lat":41.931436,"speed":25},{"lng":123.390398,"lat":41.932069,"speed":24},{"lng":123.390416,"lat":41.932686,"speed":24},{"lng":123.390482,"lat":41.933203,"speed":20},{"lng":123.390582,"lat":41.933269,"speed":19},{"lng":123.390716,"lat":41.933287,"speed":19},{"lng":123.391433,"lat":41.933337,"speed":24},{"lng":123.392268,"lat":41.933305,"speed":26},{"lng":123.392402,"lat":41.933238,"speed":26},{"lng":123.392652,"lat":41.933071,"speed":24},{"lng":123.392819,"lat":41.932788,"speed":26},{"lng":123.393085,"lat":41.932205,"speed":30},{"lng":123.393536,"lat":41.931422,"speed":35},{"lng":123.393803,"lat":41.930956,"speed":39},{"lng":123.39407,"lat":41.930472,"speed":39},{"lng":123.394287,"lat":41.930006,"speed":41},{"lng":123.394504,"lat":41.929506,"speed":43},{"lng":123.394704,"lat":41.928972,"speed":44},{"lng":123.394921,"lat":41.928423,"speed":46},{"lng":123.395137,"lat":41.927857,"speed":46},{"lng":123.395354,"lat":41.92729,"speed":48},{"lng":123.395588,"lat":41.926707,"speed":46},{"lng":123.395822,"lat":41.926123,"speed":49},{"lng":123.396055,"lat":41.92554,"speed":47},{"lng":123.396338,"lat":41.924991,"speed":44},{"lng":123.396639,"lat":41.924508,"speed":41},{"lng":123.396939,"lat":41.924091,"speed":35},{"lng":123.397506,"lat":41.923391,"speed":28},{"lng":123.397974,"lat":41.922825,"speed":22},{"lng":123.398407,"lat":41.922375,"speed":13},{"lng":123.398841,"lat":41.921942,"speed":15},{"lng":123.399241,"lat":41.921525,"speed":24},{"lng":123.399791,"lat":41.920975,"speed":31},{"lng":123.400159,"lat":41.92061,"speed":35},{"lng":123.400876,"lat":41.919876,"speed":37},{"lng":123.401277,"lat":41.91946,"speed":41},{"lng":123.401693,"lat":41.919026,"speed":41},{"lng":123.40211,"lat":41.918576,"speed":43},{"lng":123.402527,"lat":41.918127,"speed":41},{"lng":123.402911,"lat":41.917727,"speed":37},{"lng":123.403361,"lat":41.917077,"speed":30},{"lng":123.403378,"lat":41.916877,"speed":23},{"lng":123.403261,"lat":41.916811,"speed":23},{"lng":123.402994,"lat":41.916761,"speed":26},{"lng":123.402043,"lat":41.916676,"speed":37},{"lng":123.401342,"lat":41.916643,"speed":41},{"lng":123.400659,"lat":41.91661,"speed":37},{"lng":123.400041,"lat":41.916593,"speed":33},{"lng":123.39899,"lat":41.916542,"speed":28},{"lng":123.398123,"lat":41.916509,"speed":22},{"lng":123.397839,"lat":41.916475,"speed":14},{"lng":123.397806,"lat":41.916325,"speed":15},{"lng":123.397939,"lat":41.915509,"speed":26},{"lng":123.397973,"lat":41.914675,"speed":31},{"lng":123.398073,"lat":41.913825,"speed":33},{"lng":123.398123,"lat":41.913375,"speed":35},{"lng":123.398173,"lat":41.912892,"speed":39},{"lng":123.398206,"lat":41.912425,"speed":34},{"lng":123.398289,"lat":41.911592,"speed":38},{"lng":123.398356,"lat":41.911075,"speed":43},{"lng":123.398389,"lat":41.910526,"speed":41},{"lng":123.398439,"lat":41.91001,"speed":37},{"lng":123.398488,"lat":41.909543,"speed":35},{"lng":123.398538,"lat":41.90876,"speed":28},{"lng":123.398555,"lat":41.90806,"speed":31},{"lng":123.398555,"lat":41.907143,"speed":41},{"lng":123.398572,"lat":41.90666,"speed":39},{"lng":123.398555,"lat":41.905793,"speed":31},{"lng":123.398555,"lat":41.905226,"speed":13},{"lng":123.398555,"lat":41.904743,"speed":22},{"lng":123.398572,"lat":41.904093,"speed":30},{"lng":123.398572,"lat":41.90326,"speed":33},{"lng":123.398588,"lat":41.90251,"speed":26},{"lng":123.398554,"lat":41.901893,"speed":22},{"lng":123.398504,"lat":41.90171,"speed":16},{"lng":123.398421,"lat":41.90166,"speed":16},{"lng":123.398121,"lat":41.90171,"speed":15},{"lng":123.397403,"lat":41.901793,"speed":26},{"lng":123.396285,"lat":41.901875,"speed":35},{"lng":123.395668,"lat":41.901892,"speed":37},{"lng":123.394983,"lat":41.901941,"speed":41},{"lng":123.394232,"lat":41.901991,"speed":44},{"lng":123.393516,"lat":41.902023,"speed":41},{"lng":123.392831,"lat":41.902073,"speed":39},{"lng":123.392197,"lat":41.902072,"speed":35},{"lng":123.391062,"lat":41.902072,"speed":31},{"lng":123.390094,"lat":41.902071,"speed":26},{"lng":123.38941,"lat":41.902087,"speed":17},{"lng":123.388675,"lat":41.90207,"speed":26},{"lng":123.387857,"lat":41.902069,"speed":20},{"lng":123.387189,"lat":41.902036,"speed":17},{"lng":123.386471,"lat":41.902002,"speed":18},{"lng":123.386371,"lat":41.901935,"speed":22},{"lng":123.386338,"lat":41.901818,"speed":20},{"lng":123.386371,"lat":41.901652,"speed":20},{"lng":123.386671,"lat":41.901185,"speed":0},{"lng":123.386939,"lat":41.900785,"speed":22},{"lng":123.387389,"lat":41.900169,"speed":33},{"lng":123.387657,"lat":41.899736,"speed":39},{"lng":123.38794,"lat":41.899286,"speed":39},{"lng":123.388257,"lat":41.898787,"speed":44},{"lng":123.388591,"lat":41.898254,"speed":44},{"lng":123.388924,"lat":41.897754,"speed":43},{"lng":123.389209,"lat":41.897287,"speed":39},{"lng":123.389442,"lat":41.896855,"speed":37},{"lng":123.38991,"lat":41.896055,"speed":32},{"lng":123.390193,"lat":41.895605,"speed":7},{"lng":123.390376,"lat":41.895355,"speed":13},{"lng":123.390694,"lat":41.894889,"speed":24},{"lng":123.391161,"lat":41.894172,"speed":31},{"lng":123.391595,"lat":41.893489,"speed":26},{"lng":123.391978,"lat":41.892957,"speed":15},{"lng":123.392346,"lat":41.89254,"speed":26},{"lng":123.392863,"lat":41.891907,"speed":37},{"lng":123.393214,"lat":41.891458,"speed":41},{"lng":123.393597,"lat":41.890958,"speed":50},{"lng":123.394081,"lat":41.890358,"speed":59},{"lng":123.394648,"lat":41.889709,"speed":63},{"lng":123.395182,"lat":41.889042,"speed":59},{"lng":123.395616,"lat":41.888425,"speed":55},{"lng":123.396033,"lat":41.887909,"speed":44},{"lng":123.3964,"lat":41.887476,"speed":35},{"lng":123.396884,"lat":41.886826,"speed":28},{"lng":123.397051,"lat":41.886593,"speed":24},{"lng":123.397284,"lat":41.88651,"speed":10},{"lng":123.398119,"lat":41.886594,"speed":11},{"lng":123.39877,"lat":41.886677,"speed":26},{"lng":123.399821,"lat":41.886727,"speed":35},{"lng":123.400437,"lat":41.886744,"speed":37},{"lng":123.401105,"lat":41.886778,"speed":42},{"lng":123.401788,"lat":41.886795,"speed":41},{"lng":123.402423,"lat":41.886828,"speed":36},{"lng":123.403457,"lat":41.886878,"speed":30},{"lng":123.404507,"lat":41.886929,"speed":30},{"lng":123.404925,"lat":41.886929,"speed":21},{"lng":123.404975,"lat":41.886896,"speed":21},{"lng":123.405041,"lat":41.886813,"speed":19},{"lng":123.405108,"lat":41.886446,"speed":24},{"lng":123.405208,"lat":41.885679,"speed":35},{"lng":123.405308,"lat":41.884813,"speed":30},{"lng":123.405391,"lat":41.884079,"speed":30},{"lng":123.405491,"lat":41.883213,"speed":33},{"lng":123.405591,"lat":41.882479,"speed":17},{"lng":123.405658,"lat":41.881863,"speed":27},{"lng":123.405674,"lat":41.881096,"speed":33},{"lng":123.40569,"lat":41.880629,"speed":39},{"lng":123.405724,"lat":41.880113,"speed":37},{"lng":123.405757,"lat":41.879613,"speed":41},{"lng":123.40579,"lat":41.879046,"speed":44},{"lng":123.405824,"lat":41.878479,"speed":44},{"lng":123.405857,"lat":41.877929,"speed":43},{"lng":123.405874,"lat":41.877429,"speed":39},{"lng":123.405924,"lat":41.876746,"speed":19},{"lng":123.405957,"lat":41.876279,"speed":11},{"lng":123.406024,"lat":41.875729,"speed":24},{"lng":123.406107,"lat":41.874946,"speed":35},{"lng":123.406157,"lat":41.874463,"speed":37},{"lng":123.40619,"lat":41.874013,"speed":37},{"lng":123.40624,"lat":41.873496,"speed":43},{"lng":123.40629,"lat":41.872929,"speed":50}];
-console.log(lineArr.length);
+// let lineArr = JSON.parse(localStorage.getItem("stdata"))
+console.log(lineArr[lineArr.length-1].lng,lineArr[lineArr.length-1].lat);
 let columns1=[]
 let columns2=[]
 for(let i = 1; i < 80; i++){
@@ -146,18 +147,16 @@ export default {
       heightSpeed:false,
       speed1:40,
       speed2:80,
+      parmaList:['今天','昨天','近三天','近一周'],
       showPopover:false,
       actions:[{ text: '1' },{ text: '2' },{ text: '3' },{ text: '4' },{ text: '5' }],
-      parmaList:['今天','昨天','近三天','近一周'],
       REPLAY_INDEX:0,
-      PLAY_PROCESS:0,
       baseUrl: process.env.BASE_URL
     }
   },
   mounted(){
-    // this.fetch()
+    this.fetch()
     this.init()
-    // this.addmarker()
   },
   methods: {
     init(){
@@ -169,21 +168,22 @@ export default {
       });
       this.marker = []
       this.marker.push(new AMap.Marker({
-        position:[_this.lineArr[0].lng,_this.lineArr[0].lat] || [],
+        position:new AMap.LngLat(_this.lineArr[0].lng, _this.lineArr[0].lat),
+        // position:[_this.lineArr[0].lng,_this.lineArr[0].lat] || []
         icon: _this.IconType(0,40,30),
         offset: new AMap.Pixel(-15, -25),
         angle:-90,
         zIndex:20
       }))
       this.marker.push(new AMap.Marker({
-        position:[_this.lineArr[0].lng,_this.lineArr[0].lat] || [],
+        position:new AMap.LngLat(_this.lineArr[0].lng, _this.lineArr[0].lat),
         icon: _this.IconType(2,28,20),
         offset: new AMap.Pixel(-20, -9),
         autoRotation: true,
         angle:-90,
       }))
       this.marker.push(new AMap.Marker({
-        position: [_this.lineArr[_this.lineArr.length-1].lng,_this.lineArr[_this.lineArr.length-1].lat] || [],
+        position: new AMap.LngLat(_this.lineArr[_this.lineArr.length-1].lng,_this.lineArr[_this.lineArr.length-1].lat),
         icon: _this.IconType(1,40,30),
         offset: new AMap.Pixel(-25,-25),
         autoRotation: true,
@@ -204,23 +204,36 @@ export default {
         extData:{rr:0}
       });
       //画线
-       window.pathd = []
+      window.pathed = []
       this.lineArr.forEach(val=>{
-        pathd.push([val.lng,val.lat])
+        pathed.push([val.lng,val.lat])
       })
       let polyline = new AMap.Polyline({
         map: _this.map,
-        path: pathd,
+        path: pathed,
         showDir:true,
         strokeColor: "#28F",  //线颜色
         // strokeOpacity: 1,     //线透明度
         strokeWeight: 6,      //线宽
         // strokeStyle: "solid"  //线样式
       });
-      this.marker[1].on('moving', function (e) {
+
+      //添加监听事件： 车辆移动的时候，更新速度窗体位置，记录当前回放百分比
+      AMap.event.addListener(_this.marker[1], 'moving', function (e) {
         passedPolyline.setPath(e.passedPath);
         // 设置地图中心点
         _this.map.setCenter(e.target.getPosition())
+        //marker走过点的长度
+        var lastLocation = e.passedPath.length;
+        console.log(lastLocation,_this.lineArr.length)
+        //设置进度条
+        _this.value = Math.round((lastLocation+_this.REPLAY_INDEX) / _this.lineArr.length * 100)
+        //播放完毕，回到初始位置
+        if(_this.value == 100){
+          console.log('结束');
+          AMap.event.removeListener(_this.marker[1])
+          _this.initPlay()
+        }
       });
       this.map.setFitView()
     },
@@ -269,35 +282,16 @@ export default {
       });
     },
     startAnimation () {
-      if (this.marker) {
-            this.pauseAnimation();
-        }
       let _this = this
-      let speed = this.speed*1000
+      let speed = this.speed*2000
       //计算需要回放的GPS路径
       var replayPath = [];
       for (var i = this.REPLAY_INDEX; i < this.lineArr.length; i++) {
-          replayPath.push(new AMap.LngLat(this.lineArr[i].lng, this.lineArr[i].lat));
+        replayPath.push(new AMap.LngLat(_this.lineArr[i].lng, _this.lineArr[i].lat));
       }
-      this.marker[1].moveAlong(replayPath, speed,function (k) {
-          console.log(k);
-            return k
-        }, false);
-      //添加监听事件： 车辆移动的时候，更新速度窗体位置，记录当前回放百分比
-      AMap.event.addListener(_this.marker[1], 'moving', function (e) {
-          var lastLocation = e.passedPath.length;
-          console.log(lastLocation);
-          _this.value = Math.round(lastLocation / _this.lineArr.length * 100)
-          if(_this.value == 100){
-            _this.initPlay()
-          }
-          //移动窗体
-          // carWindow.setPosition(lastLocation);
-          //根据gps信息，在源数据中查询当前位置速度
-          // setVehicleSpeedInWidowns(lastLocation);
-          //更新进度条
-          // $("#ionrange_process").data('ionRangeSlider').update({from: Math.round((e.passedPath.length + VEHICLE_PATH_REPLAY_START) / routeInfo.length * 100)})
-      });
+
+      this.marker[1].moveAlong(replayPath, speed)
+      
     },
     pauseAnimation () {
         this.marker[1].pauseMove();
@@ -312,11 +306,12 @@ export default {
       this.value = 0
       this.speed = 1
       this.playing = true
+      this.REPLAY_INDEX = 0
       this.init()
     },
     fetch(){
       let _this = this
-      this.plateNo = this.$route.query.plateNo
+      this.plateNo = '豫RET528'
       let sTime = this.startTime || this.getNowDate("00:00:00")
       let eTime = this.endTime || this.getNowDate("23:59:59")
       console.log(this.plateNo,sTime,eTime);
@@ -328,8 +323,12 @@ export default {
           if(this.result.length !== 0){
             this.lineArr = []
             this.result.forEach(val => {
-              this.lineArr.push([val.longitude,val.latitude])
+                let obj = {}
+                obj.lng = val.longitude
+                obj.lat = val.latitude
+                this.lineArr.push(obj)
             })
+    
           console.log(this.lineArr);
             //初始化地图
             this.init()
@@ -340,23 +339,32 @@ export default {
             this.init()
           }
           
+        }else{
+            this.$notify({ type: 'primary', message: '数据查询失败'});
         }
       })
     },
-    //当进度条改变
-    onChange(e){
-      console.log(e);
-      
-    },
-    //进度条变化时
+    //手动拖动进度条过程中实时触发：移动车辆，定位车辆回放位置
     onInput(e){
-      
+      var currentIndex = Math.round(this.lineArr.length * e / 100);
+      var vehicleLocation = this.lineArr[currentIndex];
+      this.marker[1].setPosition(new AMap.LngLat(vehicleLocation.lng, vehicleLocation.lat))
+    },
+    //当进度条拖动结束
+    onChange(e){
+      this.REPLAY_INDEX = Math.round(this.lineArr.length * (e / 100));
+      console.log(this.REPLAY_INDEX);
+      this.startAnimation()
     },
     //开始播放
     startPlay(){
       if(this.playing){
-        this.startAnimation()
-        this.playing = false
+        if(this.value !== 0){
+          this.resumeAnimation()
+        }else{
+          this.startAnimation()
+        }
+          this.playing = false
       }else{
         this.pauseAnimation()
         this.playing = true
@@ -366,9 +374,10 @@ export default {
     changeSpeed(action,index){
       this.speed = action.text
       let _this = this
-      this.REPLAY_INDEX = Math.round(this.lineArr.length * this.PLAY_PROCESS / 100);
-      this.startAnimation();
-
+      this.REPLAY_INDEX = Math.round(this.lineArr.length * this.value / 100);
+      console.log(this.REPLAY_INDEX);
+      // this.startAnimation();
+      this.stopAnimation()
     },
     openSetting(){
       this.show = true
@@ -580,7 +589,7 @@ export default {
 }
 .control{
   width: 100%;
-  height: 0.44rem;
+  /* height: 0.44rem; */
   background: #fff;
   box-shadow: 0 0.01rem 0.8rem 0.1rem #d0d0d0;
   position: fixed;
@@ -602,7 +611,7 @@ export default {
 }
 .block {
   width: 3rem;
-  height: 3rem;
+  height: 3.2rem;
   background-color: #fff;
   position: relative;
 }

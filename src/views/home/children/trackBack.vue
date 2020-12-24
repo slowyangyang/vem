@@ -18,7 +18,19 @@
       <van-row type="flex" justify="space-between" align="center" gutter="10">
         <van-col :span="3"><van-icon :name="playing ? 'play-circle-o': 'pause-circle-o'" :size="24" @click="startPlay" /></van-col>
         <van-col :span="17"><van-slider v-model="value" button-size="20"  @change="onChange" @input="onInput"/></van-col>
-        <van-col :span="1"><van-button size="samll" @click="changeSpeed">x{{speed}}</van-button></van-col>
+        <van-col :span="1">
+          <van-popover
+            v-model="showPopover"
+            trigger="click"
+            :actions="actions"
+            theme="dark"
+            placement="top"
+            @select="changeSpeed">
+            <template #reference>
+              <van-button size="samll">x{{speed}}</van-button>
+            </template>
+          </van-popover>
+        </van-col>
         <van-col :span="3"><van-icon name="setting-o" :size="24" @click="openSetting"/></van-col>
       </van-row>
     </div>
@@ -133,6 +145,9 @@ export default {
       speed1:40,
       speed2:80,
       parmaList:['今天','昨天','近三天','近一周'],
+      showPopover:false,
+      actions:[{ text: '1' },{ text: '2' },{ text: '3' },{ text: '4' },{ text: '5' }],
+      REPLAY_INDEX:0,
       baseUrl: process.env.BASE_URL
     }
   },
@@ -148,6 +163,15 @@ export default {
         center: _this.center,
         zoom: 15
       });
+      // //初始化marker
+      this.initMarker()
+      // //画线
+      this.Polylines()
+      // //地图zoom自适应
+      this.map.setFitView()
+    },
+    initMarker(){
+      let _this = this
       this.marker = []
       this.marker.push(new AMap.Marker({
         position:[_this.lineArr[0][0],_this.lineArr[0][1]] || [],
@@ -174,32 +198,6 @@ export default {
       this.map.setCenter(_this.lineArr ?  [_this.lineArr[0][0],_this.lineArr[0][1]] : [])
       // //在地图中添加marker
       this.map.add(_this.marker);
-      //途径
-      let passedPolyline = new AMap.Polyline({
-        map: _this.map,
-        // path: _this.lineArr,
-        strokeColor: "#AF5",  //线颜色
-        // strokeOpacity: 1,     //线透明度
-        strokeWeight: 6,      //线宽
-        // strokeStyle: "solid"  //线样式,
-        extData:{rr:0}
-      });
-      //画线
-      let polyline = new AMap.Polyline({
-        map: _this.map,
-        path: _this.lineArr,
-        showDir:true,
-        strokeColor: "#28F",  //线颜色
-        // strokeOpacity: 1,     //线透明度
-        strokeWeight: 6,      //线宽
-        // strokeStyle: "solid"  //线样式
-      });
-      this.marker[1].on('moving', function (e) {
-        passedPolyline.setPath(e.passedPath);
-        // 设置地图中心点
-        _this.map.setCenter(e.target.getPosition())
-      });
-      this.map.setFitView()
     },
     IconType(index,w,h){
       let _this = this
@@ -224,7 +222,7 @@ export default {
     // 绘制轨迹
     Polylines(){
       let _this = this
-    this.polyline = new AMap.Polyline({
+      let polyline = new AMap.Polyline({
         map: _this.map,
         path: _this.lineArr,
         showDir:true,
@@ -232,36 +230,46 @@ export default {
         // strokeOpacity: 1,     //线透明度
         strokeWeight: 6,      //线宽
         // strokeStyle: "solid"  //线样式
-    });
+      });
     },
     passedPolylines(){
       let _this = this
       this.passedPolyline = new AMap.Polyline({
         map: _this.map,
-        // path: lineArr,
+        // path: _this.lineArr,
         strokeColor: "#AF5",  //线颜色
         // strokeOpacity: 1,     //线透明度
         strokeWeight: 6,      //线宽
         // strokeStyle: "solid"  //线样式
       });
     },
+    watchMarker(){
+      
+    },
     startAnimation () {
       let _this = this
       let speed = this.speed*500000
-      this.marker[1].moveAlong(_this.lineArr, speed);
+      //计算需要回放的GPS路径
+      var replayPath = [];
+      for (var i = this.REPLAY_INDEX; i < this.result.length; i++) {
+        replayPath.push(new AMap.LngLat(_this.result[i].longitude,_this.result[i].latitude));
+      }
+      console.log(replayPath.length);
+      this.marker[1].moveAlong(replayPath, speed,function (k) {
+          return k
+      }, false);
       //添加监听事件： 车辆移动的时候，更新速度窗体位置，记录当前回放百分比
       AMap.event.addListener(_this.marker[1], 'moving', function (e) {
-        console.log(e);
-          var lastLocation = e.passedPath.length;
-          console.log(lastLocation);
-          _this.value = (lastLocation/_this.lineArr.length)*100
-          console.log(_this.value)
-          //移动窗体
-          // carWindow.setPosition(lastLocation);
-          //根据gps信息，在源数据中查询当前位置速度
-          // setVehicleSpeedInWidowns(lastLocation);
-          //更新进度条
-          // $("#ionrange_process").data('ionRangeSlider').update({from: Math.round((e.passedPath.length + VEHICLE_PATH_REPLAY_START) / routeInfo.length * 100)})
+        // 设置地图中心点,跟随视野
+        _this.map.setCenter(e.target.getPosition())
+        var lastLocation = e.passedPath.length;
+        console.log(lastLocation,_this.result.length);
+        _this.value = Math.round((lastLocation+_this.REPLAY_INDEX) / _this.lineArr.length * 100)
+        //播放完毕，回到初始位置
+        if(_this.value == 100){
+          console.log('结束');
+          _this.initPlay()
+        }
       });
     },
     pauseAnimation () {
@@ -272,6 +280,13 @@ export default {
     },
     stopAnimation () {
         this.marker[1].stopMove();
+    },
+    initPlay(){
+      this.value = 0
+      this.speed = 1
+      this.playing = true
+      this.REPLAY_INDEX = 0
+      this.init()
     },
     fetch(){
       let _this = this
@@ -289,7 +304,7 @@ export default {
             this.result.forEach(val => {
               this.lineArr.push([val.longitude,val.latitude])
             })
-          console.log(this.lineArr);
+            console.log(this.lineArr);
             //初始化地图
             this.init()
             this.$notify({ type: 'primary', message: '请开始播放'});
@@ -298,35 +313,43 @@ export default {
              //初始化地图
             this.init()
           }
-          
         }
       })
     },
-    //当进度条改变
-    onChange(e){
-      console.log(e);
-    },
-    //拖动进度条时
+    //手动拖动进度条过程中实时触发：移动车辆，定位车辆回放位置
     onInput(e){
-      console.log(e);
+      
+        var currentIndex = Math.round(this.lineArr.length * e / 100);
+        var vehicleLocation = this.lineArr[currentIndex];
+        this.marker[1].setPosition(new AMap.LngLat(vehicleLocation.lng, vehicleLocation.lat));
+      
+    },
+    //当进度条拖动结束
+    onChange(e){
+      this.REPLAY_INDEX = Math.round(this.lineArr.length * e / 100);
+      console.log(this.REPLAY_INDEX);
+      this.startAnimation()
     },
     //开始播放
     startPlay(){
-      this.playing = !this.playing
       if(this.playing){
-        this.pauseAnimation()
+        if(this.value !== 0){
+          this.resumeAnimation()
+        }else{
+          this.startAnimation()
+        }
+          this.playing = false
       }else{
-        this.startAnimation()
+        this.pauseAnimation()
+        this.playing = true
       }
     },
     //改变速率
-    changeSpeed(){
+    changeSpeed(action,index){
+      this.speed = action.text
       let _this = this
-      if(this.speed == 5){
-        this.speed = 1
-        return 
-      }
-      this.speed++
+      this.REPLAY_INDEX = Math.round(this.lineArr.length * this.value / 100);
+      this.startAnimation();
     },
     openSetting(){
       this.show = true
@@ -538,7 +561,7 @@ export default {
 }
 .control{
   width: 100%;
-  height: 0.44rem;
+  /* height: 0.44rem; */
   background: #fff;
   box-shadow: 0 0.01rem 0.8rem 0.1rem #d0d0d0;
   position: fixed;
