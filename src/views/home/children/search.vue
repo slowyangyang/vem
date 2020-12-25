@@ -52,7 +52,7 @@ export default {
         check: { 
           enable: true, 
           nocheckInherit: false ,
-          chkboxType: { "Y": "s", "N": "s" }
+          chkboxType: { "Y": "", "N": "" }
           },
         data: { 
           simpleData: { 
@@ -65,6 +65,7 @@ export default {
         callback: {
           onClick: this.zTreeOnClick,
           onCollapse:this.Collapse,
+          onCheck:this.onchecked
           // onExpand:this.Expand
 			  },
         view: {
@@ -85,38 +86,38 @@ export default {
         }
       },
       zNodes:[
-              { id:1,pid:0,name:"大良造菜单",open:true,nocheck:false,
+              { id:1,pid:0,name:"大良造菜单",open:true,nocheck:true,
                 children: [
                     { id:11,pid:1,name:"当前项目"},
-                    { id:12,pid:1,name:"工程管理",open:true,
+                    { id:12,pid:1,name:"工程管理",open:true,nocheck:true,
                         children: [
                             { id:121,pid:12,name:"我的工程"},
                             { id:122,pid:12,name:"施工调度"},
                             { id:1211,pid:12,name:"材料竞价"}
                         ]
                     },
-                    { id:13,pid:1,name:"录入管理",open:true,
+                    { id:13,pid:1,name:"录入管理",nocheck:true,open:true,
                         children: [
                             { id:131,pid:13,name:"用工录入"},
                             { id:132,pid:13,name:"商家录入"},
                             { id:1314,pid:13,name:"机构列表"}
                         ]
                     },
-                    { id:14,pid:1,name:"审核管理",open:true,
+                    { id:14,pid:1,name:"审核管理",nocheck:true,open:true,
                         children: [
                             { id:141,pid:14,name:"用工审核"},
                             { id:142,pid:14,name:"商家审核"},
                             { id:145,pid:14,name:"机构审核"}
                         ]
                     },
-                    { id:15,pid:1,name:"公司管理",open:true,
+                    { id:15,pid:1,name:"公司管理",open:true,nocheck:true,
                         children: [
                             { id:1517,pid:15,name:"我的工程案例"},
                             { id:1518,pid:15,name:"联系人设置"},
                             { id:1519,pid:15,name:"广告设置"}
                         ]
                     },
-                    { id:16,pid:1,name:"业务管理",open:true,
+                    { id:16,pid:1,name:"业务管理",nocheck:true,open:true,
                         children: [
                             { id:164,pid:16,name:"合同范本"},
                             { id:165,pid:16,name:"合同列表"},
@@ -130,19 +131,19 @@ export default {
                             { id:175,pid:17,name:"供应菜单"}
                         ]
                     },
-                    { id:18,pid:1,name:"我的功能",open:true,
+                    { id:18,pid:1,name:"我的功能",open:true,nocheck:true,
                         children: [
                             { id:181,pid:18,name:"免费设计"},
                             { id:182,pid:18,name:"装修报价"},
                             { id:1817,pid:18,name:"项目用工"}
                         ]
                     },
-                    { id:19,pid:1,name:"分润管理",open:true,
+                    { id:19,pid:1,name:"分润管理",open:true,nocheck:true,
                         children: [
                             { id:191,pid:19,name:"分润列表"}
                         ]
                     },
-                    { id:110,pid:1,name:"运营管理",open:true,
+                    { id:110,pid:1,name:"运营管理",open:true,nocheck:true,
                         children: [
                             { id:1101,pid:110,name:"代理列表"},
                             { id:1102,pid:110,name:"代售商品"}
@@ -173,8 +174,8 @@ export default {
       if(this.isfetch){
         this.isfetch = false
         this.cordShow = true
-        this.fetch(1)
-        // this.initzTree()
+        // this.fetch(1)
+        this.initzTree()
       }
     },
     onBlur(){
@@ -198,10 +199,10 @@ export default {
         })
         str = str.substr(0,str.length-1)
         this.value = str
-        this.cordShow = false
-        this.isfetch = true
         this.queryCar(this.bvId)
       }
+      this.cordShow = false
+      this.isfetch = true
     },
     queryCar(bvId){
       queryLocal(bvId).then(res => {
@@ -238,6 +239,7 @@ export default {
               obj.name = val.orgName
               obj.pid = val.parentId
               obj.isParent = true
+              obj.nocheck = true
               nodes.push(obj)
             })
             this.treeObj.addNodes(treeNode,-1,nodes,true)
@@ -269,18 +271,28 @@ export default {
       this.nodes = []
     },
     zTreeOnClick(event, treeId, treeNode){
-      console.log(treeNode);
       let checked = this.treeObj.getCheckedNodes(true)
-        console.log(checked);
-        if(checked.length == 3){
-          this.$Toast({message:'请最多选择3项',duration:'1500'});
+      if(checked.length > 2){
+        if(!treeNode.checked){
+          this.$Toast({message:'请最多选择三个',duration:1500})
+          this.treeObj.cancelSelectedNode(treeNode)
+        }else{
           this.treeObj.checkNode(treeNode,'',false)
         }
-      if(!treeNode.children){
+      }else{
         this.treeObj.checkNode(treeNode,'',true)
       }
     },
-    onCheck(event, treeId, treeNode){
+    onchecked(event, treeId, treeNode){
+      let checked = this.treeObj.getCheckedNodes()
+      console.log(checked);
+      if(checked.length > 3){
+        if(treeNode.checked){
+          this.$Toast({message:'请最多选择三个',duration:1500})
+        this.treeObj.checkNode(treeNode,'',true)
+          // this.treeObj.cancelSelectedNode(treeNode)
+        }
+      }
     },
     queryFun(node) {
       for (var i in node) {
@@ -382,7 +394,8 @@ export default {
               obj.id = val.id
               obj.name = val.orgName
               obj.pid = val.parentId
-              obj.isParent = true
+              obj.isParent = true,
+              obj.nocheck = true
               this.zNodes.push(obj)
             })
           }
