@@ -9,7 +9,7 @@
 <script>
 import navBar from '@/components/navBar'
 import tabBar from '@/components/tabBar'
-import PushTab from '../../home/children/pushTab.vue'
+import PushTab from './pushTab.vue'
 export default {
   name:'policePush',
   data(){

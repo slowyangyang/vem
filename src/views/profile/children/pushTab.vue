@@ -105,6 +105,9 @@ export default {
   left: 50%;
   transform: translateX(-50%);
 }
+.van-button--info{
+  height: 0.44rem;
+}
 .van-cell{
   padding: 5px 16px;
 }

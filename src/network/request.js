@@ -8,7 +8,7 @@ Toast.setDefaultOptions({
 })
 
 let FEBS_REQUEST = axios.create({
-  baseURL: `http://192.168.1.137:9002`,
+  baseURL: `http://192.168.1.140:9002`,
   responseType: 'json',
   validateStatus (status) {
     // 200 外的状态码都认定为失败

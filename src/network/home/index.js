@@ -7,6 +7,10 @@ export function getSDK(url){
 export function getZNodes(treeCode=""){
   return request.get("/app/track/provideShowData?treeCode="+treeCode)
 }
+// 车牌搜索
+export function searchPalteNo(search=""){
+  return request.get("/app/track/provideShowData?search="+search)
+}
 /** Search**/ 
 export function queryLocal(bvId){
   return request.get("/app/vehicle/provideBVehicleInfo?bvId="+bvId.join(','))

@@ -44,13 +44,11 @@ export default {
     }
   },
   created(){
-    console.log();
   },
   activated(){
-    console.log(3);
     this.$Bus.$on("getlocal",position => {
+      // this.markers = []
       this.markers = position
-      console.log(this.markers);
       this.addMarker()
     })
   },
@@ -73,7 +71,6 @@ export default {
     },
     // 实例化点标记
     addMarker() {
-      console.log(3);
       let _this = this
       let facilities = []
       //设置Icon

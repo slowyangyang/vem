@@ -32,7 +32,7 @@ import '@/assets/css/zTreeStyle.css'
 import "@/assets/js/jquery.ztree.core.min.js"
 import "@/assets/js/jquery.ztree.excheck.min.js"
 import "@/assets/js/jquery.ztree.exhide.min.js"
-import { getZNodes, queryLocal } from 'network/home'
+import { getZNodes, queryLocal, searchPalteNo } from 'network/home'
 import axios from 'axios'
 export default {
   name:'search',
@@ -52,7 +52,7 @@ export default {
         check: { 
           enable: true, 
           nocheckInherit: false ,
-          chkboxType: { "Y": "ps", "N": "ps" }
+          chkboxType: { "Y": "s", "N": "s" }
           },
         data: { 
           simpleData: { 
@@ -65,14 +65,24 @@ export default {
         callback: {
           onClick: this.zTreeOnClick,
           onCollapse:this.Collapse,
-          onExpand:this.Expand
-
+          // onExpand:this.Expand
 			  },
         view: {
           showIcon: false,
           nameIsHTML: true,            
-          selectedMulti: false
+          selectedMulti: false,
+          dblClickExpand:false
         },
+        async: {
+          enable: true,
+          autoParam: ["id=treeCode"],
+          url:'/app/track/provideShowData',
+          // otherParam:{"treeCode":"1"},
+          type:'post',
+          dataFilter:function(treeId, parentNode, childNodes){
+            console.log(parnetNode);
+          }
+        }
       },
       zNodes:[
               { id:1,pid:0,name:"大良造菜单",open:true,nocheck:false,
@@ -143,11 +153,14 @@ export default {
       ],
       bvId:[],
       timer:null,
-      i:0
+      autoParam:[]
     }
   },
   mounted(){
-    this.initzTree()
+    // this.initzTree()
+  },
+  activated(){
+    
   },
   methods: {
     onSearch(e){
@@ -160,8 +173,8 @@ export default {
       if(this.isfetch){
         this.isfetch = false
         this.cordShow = true
-        // this.fetch(0)
-
+        this.fetch(1)
+        // this.initzTree()
       }
     },
     onBlur(){
@@ -178,37 +191,24 @@ export default {
       let checked = this.treeObj.getChangeCheckedNodes(true)
       //筛选叶子节点
       checked = checked.filter(item => !item.children)
-      checked.forEach(val => {
-        str+=val.name+','
-        this.bvId.push(val.id)
-      })
-      str = str.substr(0,str.length-1)
-      this.value = str
-      this.cordShow = false
-      this.isfetch = true
-      this.bvId.push('2000')
-      this.queryCar(this.bvId)
-      // queryLocal(bvId).then(res => {
-      //   console.log(res);
-      //   let data = res.data
-      //   if(data.status == 0){
-      //     // let field = JSON.parse(JSON.parse(data.result.field).field)
-      //     this.$Bus.$emit('getlocal',data.result.vehicle)
-      //   }else{
-      //     this.$notify({ type: 'primary', message: data.msg});
-      //   }
-      // })
+      if(checked.length){
+        checked.forEach(val => {
+          str+=val.name+','
+          this.bvId.push(val.id)
+        })
+        str = str.substr(0,str.length-1)
+        this.value = str
+        this.cordShow = false
+        this.isfetch = true
+        this.queryCar(this.bvId)
+      }
     },
     queryCar(bvId){
       queryLocal(bvId).then(res => {
         console.log(res);
         let data = res.data
-        if(data.status == 0){
-          // let field = JSON.parse(JSON.parse(data.result.field).field)
+        if(data.status === '0'){
           this.$Bus.$emit('getlocal',data.result.vehicle)
-          if(this.timer){
-            clearInterval(this.timer)
-          }
           this.polling()
         }else{
           this.$notify({ type: 'primary', message: data.msg});
@@ -218,8 +218,48 @@ export default {
     Collapse(event, treeId, treeNode){
       //被折叠
     },
+    //展开时请求子节点
     Expand(event, treeId, treeNode){
-      //展开时
+      console.log(treeNode);
+      if(!treeNode.isParent){
+        return
+      }
+      getZNodes(treeNode.id).then(res => {
+        console.log(res);
+        let data = res.data
+        let nodes = []
+        if(data.status == 0){
+          let org = data.result.data.org
+          let bv = data.result.data.bv
+          if(org){
+            org.forEach(val => {
+              let obj = {}
+              obj.id = val.id
+              obj.name = val.orgName
+              obj.pid = val.parentId
+              obj.isParent = true
+              nodes.push(obj)
+            })
+            this.treeObj.addNodes(treeNode,-1,nodes,true)
+          }
+          if(bv){
+            nodes = []
+            bv.forEach(val=>{
+              let obj = {}
+              obj.id = val.ve.id
+              obj.name = val.ve.plateNo
+              obj.simNo = val.ve.simNo
+              obj.orgId = val.ve.orgId
+              nodes.push(obj)
+            })
+            this.treeObj.addNodes(treeNode,-1,nodes,true)
+          }
+          this.treeObj.updateNode(treeNode,false)
+          console.log(this.zNodes);
+        }else{
+          this.$notify("暂无此数据")
+        }
+      })
     },
     initzTree(){
       $.fn.zTree.init($("#"+this.treeId), this.setting, this.zNodes).expandAll(false);
@@ -229,7 +269,16 @@ export default {
       this.nodes = []
     },
     zTreeOnClick(event, treeId, treeNode){
-      this.treeObj.checkNode(treeNode,'',true)
+      console.log(treeNode);
+      let checked = this.treeObj.getCheckedNodes(true)
+        console.log(checked);
+        if(checked.length == 3){
+          this.$Toast({message:'请最多选择3项',duration:'1500'});
+          this.treeObj.checkNode(treeNode,'',false)
+        }
+      if(!treeNode.children){
+        this.treeObj.checkNode(treeNode,'',true)
+      }
     },
     onCheck(event, treeId, treeNode){
     },
@@ -263,7 +312,6 @@ export default {
 	      this.showNodesFun(this.nodesShow, key)
     },
     filterzTree(key, nodes, isExpand, isHighLight){
-      console.log(key);
       var metaChar = '[\\[\\]\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]'
       var rexMeta = new RegExp(metaChar, 'gi')
       var nameKey = this.treeObj.setting.data.key.name
@@ -324,30 +372,47 @@ export default {
       getZNodes(treeCode).then(res => {
         console.log(res);
         let data = res.data
-        if(data.status == 0){
-          let org = data.result[0].data[0].org
-          org.forEac(val => {
-            
-          })
-
-          console.log(this.zNodes);
+        if(data.status === '0'){
+          let org = data.result.data.org
+          let bv = data.result.data.bv
+          this.zNodes = []
+          if(org){
+            org.forEach(val => {
+              let obj = {}
+              obj.id = val.id
+              obj.name = val.orgName
+              obj.pid = val.parentId
+              obj.isParent = true
+              this.zNodes.push(obj)
+            })
+          }
+          if(bv){
+            bv.forEach(val=>{
+              let obj = {}
+              obj.id = val.ve.id
+              obj.name = val.ve.plateNo
+              obj.simNo = val.ve.simNo
+              obj.orgId = val.ve.orgId
+              this.zNodes.push(obj)
+            })
+          }
           this.initzTree()
+        }else{
+          this.$notify({type:'primary',message:res.data.message})
         }
       }).catch(err => {
         console.log(err);
       })
     },
     polling(){
-      // if(this.timer){
-      //   clearInterval(this.timer)
-      // }
+      if(this.timer){
+        clearInterval(this.timer)
+      }
       this.timer = setInterval(()=> {
-        this.$Toast.clear()
         queryLocal(this.bvId).then(res => {
           console.log(res);
           let data = res.data
           if(data.status == 0){
-            // let field = JSON.parse(JSON.parse(data.result.field).field)
             this.$Bus.$emit('getlocal',data.result.vehicle)
           }else{
             this.$notify({ type: 'primary', message: data.msg});
@@ -355,15 +420,36 @@ export default {
         })
       },30000)
     },
-    
   },
   watch: {
     value(newV) {
-      console.log(newV);
-      this.searchFun(newV, false, false)
+      //本地搜索
+      // this.searchFun(newV, false, false)
+      if(newV){
+        searchPalteNo(newV).then(res=>{
+          let data = res.data
+          if(data.status === '0'){
+            let bv = data.result.data.bv
+            if(bv){
+              this.zNodes = []
+              bv.forEach(val=>{
+                let obj = {}
+                obj.id = val.ve.id
+                obj.name = val.ve.plateNo
+                obj.simNo = val.ve.simNo
+                obj.orgId = val.ve.orgId
+                // this.treeObj.addNodes(treeNode,-1,obj,true)
+                this.zNodes.push(obj)
+              })
+              this.initzTree()
+            }
+          }else{
+            this.$notify("暂无此数据")
+          }
+        })
+      }
     },
     cordShow(newVal){
-      console.log(newVal);
       if(newVal){
         $(".van-tabbar--fixed").hide()
       }else{

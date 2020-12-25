@@ -36,7 +36,8 @@
               <van-col v-for="(item,index) in parmaList" :key="index"><van-button type="info" round size="mini" @click="dateClick(index)">{{item}}</van-button></van-col>
             </van-row>
           </div>
-          <div>
+          <div style="margin-bottom:0.5rem">
+            <div>
             <van-cell is-link @click="pickShow1 = true">开始时间：{{startTime}}</van-cell>
             <van-popup v-model="pickShow1" position="bottom" :style="{ height: '30%' }">
               <van-datetime-picker
@@ -60,7 +61,8 @@
                 @cancel="pickerCancel"/>
             </van-popup>
           </div>
-          <div>
+          </div>
+          <!-- <div>
             <van-cell is-link @click="lowSpeed=true">低速(最高)：{{speed1}}</van-cell>
             <van-popup v-model="lowSpeed" position="bottom" :style="{ height: '30%' }">
               <van-picker
@@ -81,7 +83,7 @@
                 @confirm="heightConfirm"
                 @cancel="heightSpeed = false"/>
             </van-popup>
-          </div>
+          </div> -->
           <div class="w_bottom">
             <div class="btn" @click="show = false">取消</div>
             <div class="btn" @click="btnConfirm">确认</div>
@@ -92,19 +94,13 @@
     <!-- 轨迹详情 -->
     <div class="trackInfo" v-if="infoShow">
       <p>{{trackInfo.location}}</p>
-      <p><span>速度：</span>{{trackInfo.velocity}}</p>
-      <p><span>时间：</span>{{trackInfo.setTime}}</p>
+      <p><span>速度：</span>{{trackInfo.velocity}} km/h</p>
+      <p><span>时间：</span>{{trackInfo.sendTime}}</p>
     </div>
   </div>
 </template>
 
 <script>
-let path = [{"lng":123.390381,"lat":41.929537,"speed":0},{"lng":123.390315,"lat":41.929736,"speed":13},{"lng":123.390331,"lat":41.930286,"speed":19},{"lng":123.390365,"lat":41.930819,"speed":25},{"lng":123.390381,"lat":41.931436,"speed":25},{"lng":123.390398,"lat":41.932069,"speed":24},{"lng":123.390416,"lat":41.932686,"speed":24},{"lng":123.390482,"lat":41.933203,"speed":20},{"lng":123.390582,"lat":41.933269,"speed":19},{"lng":123.390716,"lat":41.933287,"speed":19},{"lng":123.391433,"lat":41.933337,"speed":24},{"lng":123.392268,"lat":41.933305,"speed":26},{"lng":123.392402,"lat":41.933238,"speed":26},{"lng":123.392652,"lat":41.933071,"speed":24},{"lng":123.392819,"lat":41.932788,"speed":26},{"lng":123.393085,"lat":41.932205,"speed":30},{"lng":123.393536,"lat":41.931422,"speed":35},{"lng":123.393803,"lat":41.930956,"speed":39},{"lng":123.39407,"lat":41.930472,"speed":39},{"lng":123.394287,"lat":41.930006,"speed":41},{"lng":123.394504,"lat":41.929506,"speed":43},{"lng":123.394704,"lat":41.928972,"speed":44},{"lng":123.394921,"lat":41.928423,"speed":46},{"lng":123.395137,"lat":41.927857,"speed":46},{"lng":123.395354,"lat":41.92729,"speed":48},{"lng":123.395588,"lat":41.926707,"speed":46},{"lng":123.395822,"lat":41.926123,"speed":49},{"lng":123.396055,"lat":41.92554,"speed":47},{"lng":123.396338,"lat":41.924991,"speed":44},{"lng":123.396639,"lat":41.924508,"speed":41},{"lng":123.396939,"lat":41.924091,"speed":35},{"lng":123.397506,"lat":41.923391,"speed":28},{"lng":123.397974,"lat":41.922825,"speed":22},{"lng":123.398407,"lat":41.922375,"speed":13},{"lng":123.398841,"lat":41.921942,"speed":15},{"lng":123.399241,"lat":41.921525,"speed":24},{"lng":123.399791,"lat":41.920975,"speed":31},{"lng":123.400159,"lat":41.92061,"speed":35},{"lng":123.400876,"lat":41.919876,"speed":37},{"lng":123.401277,"lat":41.91946,"speed":41},{"lng":123.401693,"lat":41.919026,"speed":41},{"lng":123.40211,"lat":41.918576,"speed":43},{"lng":123.402527,"lat":41.918127,"speed":41},{"lng":123.402911,"lat":41.917727,"speed":37},{"lng":123.403361,"lat":41.917077,"speed":30},{"lng":123.403378,"lat":41.916877,"speed":23},{"lng":123.403261,"lat":41.916811,"speed":23},{"lng":123.402994,"lat":41.916761,"speed":26},{"lng":123.402043,"lat":41.916676,"speed":37},{"lng":123.401342,"lat":41.916643,"speed":41},{"lng":123.400659,"lat":41.91661,"speed":37},{"lng":123.400041,"lat":41.916593,"speed":33},{"lng":123.39899,"lat":41.916542,"speed":28},{"lng":123.398123,"lat":41.916509,"speed":22},{"lng":123.397839,"lat":41.916475,"speed":14},{"lng":123.397806,"lat":41.916325,"speed":15},{"lng":123.397939,"lat":41.915509,"speed":26},{"lng":123.397973,"lat":41.914675,"speed":31},{"lng":123.398073,"lat":41.913825,"speed":33},{"lng":123.398123,"lat":41.913375,"speed":35},{"lng":123.398173,"lat":41.912892,"speed":39},{"lng":123.398206,"lat":41.912425,"speed":34},{"lng":123.398289,"lat":41.911592,"speed":38},{"lng":123.398356,"lat":41.911075,"speed":43},{"lng":123.398389,"lat":41.910526,"speed":41},{"lng":123.398439,"lat":41.91001,"speed":37},{"lng":123.398488,"lat":41.909543,"speed":35},{"lng":123.398538,"lat":41.90876,"speed":28},{"lng":123.398555,"lat":41.90806,"speed":31},{"lng":123.398555,"lat":41.907143,"speed":41},{"lng":123.398572,"lat":41.90666,"speed":39},{"lng":123.398555,"lat":41.905793,"speed":31},{"lng":123.398555,"lat":41.905226,"speed":13},{"lng":123.398555,"lat":41.904743,"speed":22},{"lng":123.398572,"lat":41.904093,"speed":30},{"lng":123.398572,"lat":41.90326,"speed":33},{"lng":123.398588,"lat":41.90251,"speed":26},{"lng":123.398554,"lat":41.901893,"speed":22},{"lng":123.398504,"lat":41.90171,"speed":16},{"lng":123.398421,"lat":41.90166,"speed":16},{"lng":123.398121,"lat":41.90171,"speed":15},{"lng":123.397403,"lat":41.901793,"speed":26},{"lng":123.396285,"lat":41.901875,"speed":35},{"lng":123.395668,"lat":41.901892,"speed":37},{"lng":123.394983,"lat":41.901941,"speed":41},{"lng":123.394232,"lat":41.901991,"speed":44},{"lng":123.393516,"lat":41.902023,"speed":41},{"lng":123.392831,"lat":41.902073,"speed":39},{"lng":123.392197,"lat":41.902072,"speed":35},{"lng":123.391062,"lat":41.902072,"speed":31},{"lng":123.390094,"lat":41.902071,"speed":26},{"lng":123.38941,"lat":41.902087,"speed":17},{"lng":123.388675,"lat":41.90207,"speed":26},{"lng":123.387857,"lat":41.902069,"speed":20},{"lng":123.387189,"lat":41.902036,"speed":17},{"lng":123.386471,"lat":41.902002,"speed":18},{"lng":123.386371,"lat":41.901935,"speed":22},{"lng":123.386338,"lat":41.901818,"speed":20},{"lng":123.386371,"lat":41.901652,"speed":20},{"lng":123.386671,"lat":41.901185,"speed":0},{"lng":123.386939,"lat":41.900785,"speed":22},{"lng":123.387389,"lat":41.900169,"speed":33},{"lng":123.387657,"lat":41.899736,"speed":39},{"lng":123.38794,"lat":41.899286,"speed":39},{"lng":123.388257,"lat":41.898787,"speed":44},{"lng":123.388591,"lat":41.898254,"speed":44},{"lng":123.388924,"lat":41.897754,"speed":43},{"lng":123.389209,"lat":41.897287,"speed":39},{"lng":123.389442,"lat":41.896855,"speed":37},{"lng":123.38991,"lat":41.896055,"speed":32},{"lng":123.390193,"lat":41.895605,"speed":7},{"lng":123.390376,"lat":41.895355,"speed":13},{"lng":123.390694,"lat":41.894889,"speed":24},{"lng":123.391161,"lat":41.894172,"speed":31},{"lng":123.391595,"lat":41.893489,"speed":26},{"lng":123.391978,"lat":41.892957,"speed":15},{"lng":123.392346,"lat":41.89254,"speed":26},{"lng":123.392863,"lat":41.891907,"speed":37},{"lng":123.393214,"lat":41.891458,"speed":41},{"lng":123.393597,"lat":41.890958,"speed":50},{"lng":123.394081,"lat":41.890358,"speed":59},{"lng":123.394648,"lat":41.889709,"speed":63},{"lng":123.395182,"lat":41.889042,"speed":59},{"lng":123.395616,"lat":41.888425,"speed":55},{"lng":123.396033,"lat":41.887909,"speed":44},{"lng":123.3964,"lat":41.887476,"speed":35},{"lng":123.396884,"lat":41.886826,"speed":28},{"lng":123.397051,"lat":41.886593,"speed":24},{"lng":123.397284,"lat":41.88651,"speed":10},{"lng":123.398119,"lat":41.886594,"speed":11},{"lng":123.39877,"lat":41.886677,"speed":26},{"lng":123.399821,"lat":41.886727,"speed":35},{"lng":123.400437,"lat":41.886744,"speed":37},{"lng":123.401105,"lat":41.886778,"speed":42},{"lng":123.401788,"lat":41.886795,"speed":41},{"lng":123.402423,"lat":41.886828,"speed":36},{"lng":123.403457,"lat":41.886878,"speed":30},{"lng":123.404507,"lat":41.886929,"speed":30},{"lng":123.404925,"lat":41.886929,"speed":21},{"lng":123.404975,"lat":41.886896,"speed":21},{"lng":123.405041,"lat":41.886813,"speed":19},{"lng":123.405108,"lat":41.886446,"speed":24},{"lng":123.405208,"lat":41.885679,"speed":35},{"lng":123.405308,"lat":41.884813,"speed":30},{"lng":123.405391,"lat":41.884079,"speed":30},{"lng":123.405491,"lat":41.883213,"speed":33},{"lng":123.405591,"lat":41.882479,"speed":17},{"lng":123.405658,"lat":41.881863,"speed":27},{"lng":123.405674,"lat":41.881096,"speed":33},{"lng":123.40569,"lat":41.880629,"speed":39},{"lng":123.405724,"lat":41.880113,"speed":37},{"lng":123.405757,"lat":41.879613,"speed":41},{"lng":123.40579,"lat":41.879046,"speed":44},{"lng":123.405824,"lat":41.878479,"speed":44},{"lng":123.405857,"lat":41.877929,"speed":43},{"lng":123.405874,"lat":41.877429,"speed":39},{"lng":123.405924,"lat":41.876746,"speed":19},{"lng":123.405957,"lat":41.876279,"speed":11},{"lng":123.406024,"lat":41.875729,"speed":24},{"lng":123.406107,"lat":41.874946,"speed":35},{"lng":123.406157,"lat":41.874463,"speed":37},{"lng":123.40619,"lat":41.874013,"speed":37},{"lng":123.40624,"lat":41.873496,"speed":43},{"lng":123.40629,"lat":41.872929,"speed":50}];
-let lineArr = []
-for(let i = 0;i<path.length;i++){
-  lineArr.push([path[i].lng,path[i].lat])
-}
-console.log(lineArr);
 let columns1=[]
 let columns2=[]
 for(let i = 1; i < 80; i++){
@@ -153,7 +149,7 @@ export default {
       speed2:80,
       parmaList:['今天','昨天','近三天','近一周'],
       showPopover:false,
-      actions:[{ text: '1' },{ text: '2' },{ text: '3' },{ text: '4' },{ text: '5' }],
+      actions:[{ text: '2' },{ text: '4' },{ text: '8' },{ text: '16' },{ text: '32' }],
       REPLAY_INDEX:0,
       baseUrl: process.env.BASE_URL,
       // 信息窗体
@@ -232,8 +228,8 @@ export default {
     }
   },
   mounted(){
-    // this.fetch()
-    this.Init()
+    this.fetch()
+    // this.Init()
   },
   methods: {
     // 初始化巡航组件实例
@@ -247,21 +243,19 @@ export default {
         that.initSimplifier = true
         that.signMarker.setLabel({})
         if (window.pathSimplifierIns && that.pathSimplifierIns) {
-          //通过该方法清空上次传入的轨迹
+          //清空上次传入的轨迹
           that.pathSimplifierIns.setData([]);
         }
         // TODO
-        // let linArray = this.lineArr
-        // let pointDataList = this.result
-        let linArray = lineArr
-        let pointDataList = path
+        let linArray = this.lineArr
+        let pointDataList = this.result
+        // let linArray = lineArr
+        // let pointDataList = path
         // 初始化坐标点
         if (linArray.length > 0) {
           that.signMarker.show()
           that.signMarker.setPosition(linArray[0])
-
           that.actualList = linArray
-
           //创建一个巡航轨迹路线
           that.pathSimplifierIns = new PathSimplifier({
             zIndex: 100,//地图层级，
@@ -274,7 +268,6 @@ export default {
             getHoverTitle: function(pathData, pathIndex, pointIndex) {
               return ''
             },
-            //自定义样式，可设置巡航器样式，巡航轨迹样式，巡航轨迹点击、hover等不同状态下的样式，不设置则用默认样式，详情请参考api文档 renderOptions:{}
             //绘制路线节点
             renderOptions: that.defaultRenderOptions
           })
@@ -292,7 +285,7 @@ export default {
           function onerror(e) {
             console.log('图片加载失败！')
           }
-          //对第一条线路（即索引 0）创建一个巡航器
+          //对第一条线路创建一个巡航器
           let image = PathSimplifier.Render.Canvas.getImageContent('/car.png', onload, onerror)
           that.navgtr = that.pathSimplifierIns.createPathNavigator(0, {
             loop: false, //循环播放
@@ -300,7 +293,6 @@ export default {
             pathNavigatorStyle: {
               width: 40,
               height: 25,
-              //使用图片
               content: image, // 自定义巡航样式
               strokeStyle: null,
               fillStyle: null,
@@ -327,7 +319,7 @@ export default {
           })
           that.navgtr.on('move', function(data, position) {
             //更新地图中心点,视野跟随
-            that.map.setCenter(lineArr[position.dataItem.pointIndex])
+            that.map.setCenter(that.lineArr[position.dataItem.pointIndex])
             that.isCursorAtPathEnd = false
             let idx = position.dataItem.pointIndex //走到了第几个点
             let tail = position.tail //至下一个节点的比例位置
@@ -336,6 +328,11 @@ export default {
             // 设置当前点位
             that.currentPoint = that.actualList[idx]
             that.velocity = pointDataList[idx]
+            that.trackInfo = {
+              location:pointDataList[idx].location,
+              velocity:pointDataList[idx].velocity,
+              sendTime:pointDataList[idx].sendTime
+            }
             // 打开信息窗体
             let content = [
               '<div style="padding: 5px;">',
@@ -345,7 +342,7 @@ export default {
               '</div>'
             ]
             that.infoWindow.setContent(content.join(''))
-            that.infoWindow.open(that.map, that.actualList[idx])
+            // that.infoWindow.open(that.map, that.actualList[idx])
             if(idx < len - 1) {
               that.navgtr.setSpeed(that.navgtrSpeed * that.times)
             }
@@ -450,7 +447,8 @@ export default {
       let eTime = this.endTime || this.getNowDate("23:59:59")
       console.log(this.plateNo,sTime,eTime);
       trackQuery(this.plateNo,sTime,eTime).then(res => {
-        if(res.data.status == 0){
+        console.log(res.data.status === '0');
+        if(res.data.status === '0'){
           let data = res.data.result.carHistory
           this.result = this.unzip(data)
           console.log(this.result);
@@ -480,6 +478,7 @@ export default {
       this.initMarker()
       // 初始化信息窗体
       this.initInfoWindow()
+      this.initPlayBox()
       this.initPathSimplifier()
     },
     // 初始化地图
@@ -488,8 +487,6 @@ export default {
         resizeEnable: true, 
         zoom: 15
       })
-      console.log(this.lineArr);
-      // this.map.setCenter(this.lineArr ?  [this.lineArr[0][0],this.lineArr[0][1]] : [])
     },
     initMarker() {
       // 引入Marker,绘制点标记
@@ -600,22 +597,12 @@ export default {
     },
     btnConfirm(){
       this.show = false
-      let obj = {
-        // lspeed:this.speed1,
-        // hspeed:this.speed2
-      }
-      obj.startTime = this.startTime,
-      obj.endTime = this.endTime,
-      obj.plateNo = this.plateNo
-      console.log(obj);
       this.fetch()
-      // trackQuery(this.plateNo,this.startTime,this.endTime).then(res => {
-      //   console.log(res);
-      // })
     },
     /**---------------------------------tools-----------------------------**/
     //标准时间转化年月日
     formatterTime(date) {
+      console.log(date);
       var y = date.getFullYear()
       var m = date.getMonth() + 1
       m = m < 10 ? '0' + m : m
@@ -627,7 +614,7 @@ export default {
       minute = minute < 10 ? '0' + minute : minute
       var second = date.getSeconds()
       second = second < 10 ? '0' + second : second
-      return y + '-' + m + '-' + d + ' ' + h + ':' + minute
+      return y + '-' + m + '-' + d + ' ' + h + ':' + minute +':' + second
     },
     formatter(type,val){
       if(type == 'year'){
@@ -799,7 +786,7 @@ export default {
 }
 .trackInfo{
   width: 100%;
-  height:1.2rem;
+  /* height:1.2rem; */
   color: #fff;
   background: rgba(0,0,0,0.5);
   padding: 0.1rem;
