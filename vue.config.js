@@ -1,5 +1,8 @@
 const webpack = require('webpack')
+const path = require('path')
 module.exports = {
+  publicPath: "./",
+  assetsDir: "./static",
   configureWebpack: {
     externals: {
       'AMap': 'AMap'
@@ -14,7 +17,7 @@ module.exports = {
     devServer: {//跨域配置
       proxy: {
         '/api':{
-          target:'http://192.168.1.136:9002',
+          target:'http://192.168.1.140:9002',
           changeOrigin: true,
           pathRewrite:{
             '^/api':''

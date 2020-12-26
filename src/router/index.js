@@ -13,12 +13,18 @@ const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location) {
   return originalPush.call(this, location).catch(err => { if (typeof err !== 'undefined')console.log(err) })
 }
+
 Vue.use(VueRouter)
 
 const routes = [
   {
     path:'/',
     redirect:'/home'
+  },
+  {
+    path:'/empty',
+    name:'empty',
+    component: () => import('@/views/empty/index')
   },
   Home,
   Monitor,
@@ -34,27 +40,26 @@ const router = new VueRouter({
   routes
 })
 /*路由跳转之前判断*/
-// router.beforeEach((to, from, next)=>{
-//   let that = this
-//   console.log(to);
-//   if(to.matched.length == 0){
-//     next("/404")
-//   }
-//   if(to.path != '/login'){
-//     if(to.meta.isAuthenticated){
-//       let token = db.get('token')
-//       console.log(token);
-//       if(token) {
-//         next()
-//       }else{
-//         next('/login')
-//       }
-//     }else{
-//       next()
-//     }
-//   }else{
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next)=>{
+  let that = this
+  if(to.matched.length == 0){
+    next("/empty")
+  }
+  if(to.path != '/login'){
+    if(to.meta.isAuthenticated){
+      let token = db.get('token')
+      console.log(token);
+      if(token) {
+        next()
+      }else{
+        next('/login')
+      }
+    }else{
+      next()
+    }
+  }else{
+    next()
+  }
+})
 
 export default router
