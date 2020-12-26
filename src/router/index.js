@@ -7,8 +7,6 @@ import policePush from './profile/policePush'
 import Login from './login'
 import trackBack from './home/trackBack'
 import db from 'common/localstorage'
-import copy from 'views/home/children/copy'
-import copy3 from 'views/home/children/copy3'
 
 // 全局Router异常处理
 const originalPush = VueRouter.prototype.push
@@ -28,16 +26,6 @@ const routes = [
   Login,
   policePush,
   trackBack,
-  {
-    path:'/copy',
-    name:'copy',
-    component:copy
-  },
-  {
-    path:'/copy3',
-    name:'copy3',
-    component:copy3
-  }
 ]
 
 const router = new VueRouter({
@@ -45,7 +33,7 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-// /*路由跳转之前判断*/
+/*路由跳转之前判断*/
 // router.beforeEach((to, from, next)=>{
 //   let that = this
 //   console.log(to);

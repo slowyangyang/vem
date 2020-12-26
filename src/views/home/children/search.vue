@@ -65,8 +65,8 @@ export default {
         callback: {
           onClick: this.zTreeOnClick,
           onCollapse:this.Collapse,
-          onCheck:this.onchecked
-          // onExpand:this.Expand
+          onCheck:this.onchecked,
+          onExpand:this.Expand
 			  },
         view: {
           showIcon: false,
@@ -74,16 +74,16 @@ export default {
           selectedMulti: false,
           dblClickExpand:false
         },
-        async: {
-          enable: true,
-          autoParam: ["id=treeCode"],
-          url:'/app/track/provideShowData',
-          // otherParam:{"treeCode":"1"},
-          type:'post',
-          dataFilter:function(treeId, parentNode, childNodes){
-            console.log(parnetNode);
-          }
-        }
+        // async: {
+        //   enable: true,
+        //   autoParam: ["id=treeCode"],
+        //   url:'/app/track/provideShowData',
+        //   // otherParam:{"treeCode":"1"},
+        //   type:'post',
+        //   dataFilter:function(treeId, parentNode, childNodes){
+        //     console.log(parnetNode);
+        //   }
+        // }
       },
       zNodes:[
               { id:1,pid:0,name:"大良造菜单",open:true,nocheck:true,
@@ -161,7 +161,14 @@ export default {
     // this.initzTree()
   },
   activated(){
-    
+    console.log(this.bvId);
+    if(this.bvId.length){
+      this.polling()
+    }
+  },
+  deactivated(){
+    clearInterval(this.timer)
+    this.timer = null
   },
   methods: {
     onSearch(e){
@@ -174,8 +181,8 @@ export default {
       if(this.isfetch){
         this.isfetch = false
         this.cordShow = true
-        // this.fetch(1)
-        this.initzTree()
+        this.fetch(1)
+        // this.initzTree()
       }
     },
     onBlur(){
@@ -272,6 +279,9 @@ export default {
     },
     zTreeOnClick(event, treeId, treeNode){
       let checked = this.treeObj.getCheckedNodes(true)
+      if(treeNode.isParent){
+        return
+      }
       if(checked.length > 2){
         if(!treeNode.checked){
           this.$Toast({message:'请最多选择三个',duration:1500})
@@ -300,9 +310,6 @@ export default {
         if (node[i].children) {
           this.queryFun(node[i].children)
         }
-        // else{
-        //   this.nodes.push(node[i])
-        // }
       }
       return this.nodes
     },
@@ -451,7 +458,6 @@ export default {
                 obj.name = val.ve.plateNo
                 obj.simNo = val.ve.simNo
                 obj.orgId = val.ve.orgId
-                // this.treeObj.addNodes(treeNode,-1,obj,true)
                 this.zNodes.push(obj)
               })
               this.initzTree()

@@ -35,7 +35,6 @@ FEBS_REQUEST.interceptors.response.use((config) => {
   if(config.status == 200){
     if(token){  //获取响应头里面的数据
       db.save("token",token)
-      console.log(db.save("token",token));
       store.commit({type:'saveToken',token})
     }
   }

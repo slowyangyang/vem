@@ -9,8 +9,8 @@
        <van-col :span="3" v-if="isPlay && palyStayus === 0"><van-icon name="play-circle-o" :size="24" @click="navgControl('start')"/></van-col>
         <van-col :span="3" v-if="isPlay && palyStayus === 1"><van-icon name="play-circle-o" :size="24" @click="navgControl('resume')"/></van-col>
         <van-col :span="3" v-if="!isPlay"><van-icon name="pause-circle-o" :size="24" @click="navgControl('pause')"/></van-col>
-        <van-col :span="17"><van-slider v-model="sliderVal" button-size="20"  @change="onChange" @input="onInput"/></van-col>
-        <van-col :span="1">
+        <van-col :span="16"><van-slider v-model="sliderVal" button-size="20"  @change="onChange" @input="onInput"/></van-col>
+        <van-col :span="2">
           <van-popover
             v-model="showPopover"
             trigger="click"
@@ -39,7 +39,7 @@
           <div style="margin-bottom:0.5rem">
             <div>
             <van-cell is-link @click="pickShow1 = true">开始时间：{{startTime}}</van-cell>
-            <van-popup v-model="pickShow1" position="bottom" :style="{ height: '30%' }">
+            <van-popup v-model="pickShow1" position="bottom" :style="{ height: '40%' }">
               <van-datetime-picker
                 v-model="scurrentDate"
                 type="datetime"
@@ -96,6 +96,10 @@
       <p>{{trackInfo.location}}</p>
       <p><span>速度：</span>{{trackInfo.velocity}} km/h</p>
       <p><span>时间：</span>{{trackInfo.sendTime}}</p>
+    </div>
+    <!-- 定位 -->
+    <div class="nowPosition" @click="getCurrentPosition">
+      <van-icon name="aim" />
     </div>
   </div>
 </template>
@@ -161,7 +165,7 @@ export default {
       sliderVal: 0, // 进度条
       times: 2, // 倍速
       maxSpeed: 32, // 最高倍速
-      navgtrSpeed: 3000, // 速度
+      navgtrSpeed: 800, // 速度
       isMinSpeed: true,
       isMaxSpeed: false,
       navgtr: null,
@@ -229,7 +233,6 @@ export default {
   },
   mounted(){
     this.fetch()
-    // this.Init()
   },
   methods: {
     // 初始化巡航组件实例
@@ -363,6 +366,7 @@ export default {
           that.initSimplifier = false
       })
     },
+    //初始化markers
     initMarkers(){
       let _this = this
       this.marker = []
@@ -471,6 +475,7 @@ export default {
         this.initMap()
       })
     },
+    //总体初始化
     Init(){
       // 初始化地图
       this.initMap()
@@ -483,11 +488,31 @@ export default {
     },
     // 初始化地图
     initMap() {
+      let _this = this
       this.map = new AMap.Map('map', {
-        resizeEnable: true, 
+        resizeEnable: true,
+        isHotspot:true, 
         zoom: 15
       })
+      this.map.plugin(["AMap.MapType"],function(){
+        //地图类型切换
+        var type= new AMap.MapType({
+        defaultType:0,//使用2D地图
+        showRoad:true,
+        showTraffic:true
+      });
+        _this.map.addControl(type);
+      });
+      this.map.plugin(["AMap.ControlBar"],function(){
+        var controlBar = new AMap.ControlBar({
+          position:{bottom:'-80px',right:'10px'},
+          showZoomBar:true,
+          showControlButton:false
+        })
+        _this.map.addControl(controlBar)
+      });
     },
+    //初始化markers(废)
     initMarker() {
       // 引入Marker,绘制点标记
       this.signMarker = new AMap.Marker({
@@ -497,6 +522,7 @@ export default {
         content: '<div style="text-align:center; background-color: hsla(180, 100%, 50%, 0.9); height: 10px; width: 10px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>'
       })
     },
+    //初始化infoWindow
     initInfoWindow() {
       // 创建 infoWindow 实例
       this.infoWindow = new AMap.InfoWindow({
@@ -508,6 +534,7 @@ export default {
     },
     // 控制播放按钮
     navgControl(type) {
+      this.map.setZoom(13)
       if(!this.navgtr || !type) {
         return
       }
@@ -535,6 +562,31 @@ export default {
       this.sliderVal = 0; // 进度条清0
       this.times = 2
     },
+    //定位
+    getCurrentPosition(){
+      let _this = this
+      AMap.plugin('AMap.Geolocation', function() {
+        var geolocation = new AMap.Geolocation({
+            enableHighAccuracy: true,//是否使用高精度定位，默认:true
+            timeout: 10000,          //超过10秒后停止定位，默认：5s
+            buttonPosition:'RB',    //定位按钮的停靠位置
+            buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+            zoomToAccuracy: true,   //定位成功后是否自动调整地图视野到定位点
+            showButton:false,
+            showMarker:true,
+            useNative:true,
+        });
+        _this.map.addControl(geolocation);
+        geolocation.getCurrentPosition(function(status,result){
+            if(status=='complete'){
+          
+            }else{
+              _this.$notify({ type: 'primary', message: '定位失败'});
+            }
+        });
+      });
+    },
+    //打开设置
     openSetting(){
       this.show = true
       this.initDate()
@@ -759,7 +811,6 @@ export default {
 }
 .block {
   width: 3rem;
-  height: 2.6rem;
   background-color: #fff;
   position: relative;
 }
@@ -799,5 +850,44 @@ export default {
 }
 .trackInfo > p > span{
   font-weight: bold;
+}
+.van-popup{
+  overflow: hidden;
+}
+/deep/.amap-maptype-wrap, /deep/.amap-maptype-con{
+  width: 40px;
+  height: 40px;
+}
+/* /deep/.amap-maptype-con{
+  width: 50px;
+  height: 50px;
+} */
+/deep/.amap-maptype-win{
+  width: 35px;
+  height: 35px;
+}
+/deep/.amap-maptype-list{
+  display: none!important;
+}
+/deep/.amap-maptype-title{
+  display: none;
+}
+/deep/.amap-luopan{
+  display: none;
+}
+/deep/.amap-maptypecontrol{
+  top:auto;
+  bottom:200px
+}
+.nowPosition{
+  width: 0.3rem;
+  height: 0.3rem;
+  position: absolute;
+  font-size: 22px;
+  right: 12px;
+  bottom: 169px;
+  background: #fff;
+  text-align: center;
+  line-height: 0.4rem;
 }
 </style>

@@ -69,7 +69,7 @@ export default {
       isLogin({code}).then((res) => {
         // console.log(res);
           let data = res.data
-          if (data.status == 0) {
+          if (data.status === '0') {
             //保存用户信息
             this.saveUser(data.result)
             db.save("USER",data.result)
@@ -77,11 +77,11 @@ export default {
           }else{
             this.openId = data.result
             this.$router.push({path:'/login'})
-            this.$notify({ type: 'primary', message: '请先登录'});
+            this.$notify({ type: 'primary', message: data.msg});
           }
       }).catch((error) => {
         console.log(error);
-        this.$notify({ type: 'danger', message: '身份验证失败'});
+        this.$notify({ type: 'danger', message: '服务器错误'});
       })
     },
     getUrlParam(name){
