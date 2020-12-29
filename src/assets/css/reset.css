@@ -200,7 +200,7 @@ input[type='search'] {
 
 /*flex box*/
 .flex {
-  display: box;
+  display:flex;
   /* OLD - Android 4.4- */
   display: -webkit-box;
   /* OLD - iOS 6-, Safari 3.1-6 */

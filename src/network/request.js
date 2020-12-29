@@ -8,7 +8,9 @@ Toast.setDefaultOptions({
 })
 
 let FEBS_REQUEST = axios.create({
-  baseURL: `http://192.168.1.140:9002`,
+  // baseURL: `http://192.168.1.140:9002`,
+  baseURL: `http://192.168.1.222:9002`,
+  // baseURL: `http://gzh.thygps.com`,
   responseType: 'json',
   validateStatus (status) {
     // 200 外的状态码都认定为失败

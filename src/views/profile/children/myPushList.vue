@@ -14,7 +14,6 @@
 
 <script>
 import db from 'common/localstorage'
-import { exitLogin } from 'network/profile'
 export default {
   name:'pushList',
   data(){

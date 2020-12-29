@@ -33,6 +33,7 @@ import "@/assets/js/jquery.ztree.core.min.js"
 import "@/assets/js/jquery.ztree.excheck.min.js"
 import "@/assets/js/jquery.ztree.exhide.min.js"
 import { getZNodes, queryLocal, searchPalteNo } from 'network/home'
+import pako from 'pako'
 import axios from 'axios'
 export default {
   name:'search',
@@ -86,7 +87,7 @@ export default {
         // }
       },
       zNodes:[
-              { id:1,pid:0,name:"大良造菜单",open:true,nocheck:true,
+              { id:1,pid:0,name:"大良造菜单",open:true,nocheck:true,iconOpen:"/src/assets/image/increase.png", iconClose:"/src/assets/image/reduce.png",
                 children: [
                     { id:11,pid:1,name:"当前项目"},
                     { id:12,pid:1,name:"工程管理",open:true,nocheck:true,
@@ -232,13 +233,17 @@ export default {
       if(!treeNode.isParent){
         return
       }
+      this.getZNodes(treeNode)
+    },
+    getZNodes(treeNode){
       getZNodes(treeNode.id).then(res => {
         console.log(res);
         let data = res.data
+        let result = this.unzip(res.data.result)
         let nodes = []
         if(data.status == 0){
-          let org = data.result.data.org
-          let bv = data.result.data.bv
+          let org = result.data.org
+          let bv = result.data.bv
           if(org){
             org.forEach(val => {
               let obj = {}
@@ -279,7 +284,14 @@ export default {
     },
     zTreeOnClick(event, treeId, treeNode){
       let checked = this.treeObj.getCheckedNodes(true)
+      console.log(treeNode);
       if(treeNode.isParent){
+        if(treeNode.open){
+          this.treeObj.expandNode(treeNode,false)
+        }else{
+          this.getZNodes(treeNode)
+          this.treeObj.expandNode(treeNode,true)
+        }
         return
       }
       if(checked.length > 2){
@@ -389,12 +401,14 @@ export default {
     },
     fetch(treeCode){
       getZNodes(treeCode).then(res => {
-        console.log(res);
         let data = res.data
+        console.log(data);
+        let result = this.unzip(res.data.result)
         if(data.status === '0'){
-          let org = data.result.data.org
-          let bv = data.result.data.bv
+          let org = result.data.org
+          let bv = result.data.bv
           this.zNodes = []
+          //遍历组织
           if(org){
             org.forEach(val => {
               let obj = {}
@@ -403,9 +417,13 @@ export default {
               obj.pid = val.parentId
               obj.isParent = true,
               obj.nocheck = true
+              obj.iconOpen = "../../../assets/image/increase.png"
+              obj.iconClose = "../../../src/assets/image/reduce.png"
               this.zNodes.push(obj)
             })
+            console.log(this.zNodes);
           }
+          //遍历同级节点
           if(bv){
             bv.forEach(val=>{
               let obj = {}
@@ -418,7 +436,7 @@ export default {
           }
           this.initzTree()
         }else{
-          this.$notify({type:'primary',message:res.data.message})
+          this.$notify({type:'primary',message:data.message})
         }
       }).catch(err => {
         console.log(err);
@@ -440,16 +458,65 @@ export default {
         })
       },30000)
     },
+    // 解析压缩包数据
+    unzip(key) {
+      let charData = key.split('').map(item => item.charCodeAt(0))
+      let array = pako.inflate(charData)
+      // 如果字符太大，会导致内存溢出报错，这里使用分片处理
+      return this.Utf8ArrayToStr(array)
+    },
+    Utf8ArrayToStr(array) {
+      var out, i, len, c;
+      var char2, char3;
+      out = "";
+      len = array.length;
+      i = 0;
+      while (i < len) {
+        c = array[i++];
+        switch (c >> 4) {
+          case 0:
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+            // 0xxxxxxx
+            out += String.fromCharCode(c);
+            break;
+          case 12:
+          case 13:
+            // 110x xxxx   10xx xxxx
+            char2 = array[i++];
+            out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+            break;
+          case 14:
+            // 1110 xxxx  10xx xxxx  10xx xxxx
+            char2 = array[i++];
+            char3 = array[i++];
+            out += String.fromCharCode(((c & 0x0F) << 12) |
+              ((char2 & 0x3F) << 6) |
+              ((char3 & 0x3F) << 0));
+            break;
+        }
+      }
+      return JSON.parse(out)
+    },
   },
   watch: {
     value(newV) {
       //本地搜索
       // this.searchFun(newV, false, false)
-      if(newV){
+      if(newV.length>=3 && newV){
+        console.log(3333);
         searchPalteNo(newV).then(res=>{
+          console.log(res);
           let data = res.data
+          let result = this.unzip(res.data.result)
           if(data.status === '0'){
-            let bv = data.result.data.bv
+            let bv = result.data.bv
+            // let bv = res.data.result.data.bv
             if(bv){
               this.zNodes = []
               bv.forEach(val=>{
@@ -508,5 +575,11 @@ export default {
 .van-button--normal{
   height: 30px;
   width: 100%;
+}
+.ztree li span.button{
+  /* width: 0.2rem;
+  height: 0.2rem;
+  border: 0.01rem solid #ccc; */
+  /* background: url("~assets/image/increase.png"); */
 }
 </style>

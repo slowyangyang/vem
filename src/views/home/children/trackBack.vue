@@ -1,9 +1,10 @@
 <template>
   <div class="trackBack">
     <nav-bar 
-      :title="title" 
+      :title="$route.query.plateNo" 
       :left-arrow="true"/>
     <div id="map"></div>
+    <!-- 播放控制 -->
     <div class="control">
       <van-row type="flex" justify="space-between" align="center" gutter="10">
        <van-col :span="3" v-if="isPlay && palyStayus === 0"><van-icon name="play-circle-o" :size="24" @click="navgControl('start')"/></van-col>
@@ -96,15 +97,22 @@
       <p>{{trackInfo.location}}</p>
       <p><span>速度：</span>{{trackInfo.velocity}} km/h</p>
       <p><span>时间：</span>{{trackInfo.sendTime}}</p>
+      <p><span>重量：</span>{{trackInfo.weight}}吨</p>
+      <p><span>里程：</span>{{parseInt(trackInfo.distance)/1000}}km</p>
+    </div>
+    <!-- 载重 -->
+    <div class="carLoad">
+      <div id="loadMain" ref="loadMain" style="width: 100%;height:100%"></div>
     </div>
     <!-- 定位 -->
-    <div class="nowPosition" @click="getCurrentPosition">
+    <!-- <div class="nowPosition" @click="getCurrentPosition">
       <van-icon name="aim" />
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
+ let lineArr = [[116.478935,39.997761],[116.478939,39.997825],[116.478912,39.998549],[116.478912,39.998549],[116.478998,39.998555],[116.478998,39.998555],[116.479282,39.99856],[116.479658,39.998528],[116.480151,39.998453],[116.480784,39.998302],[116.480784,39.998302],[116.481149,39.998184],[116.481573,39.997997],[116.481863,39.997846],[116.482072,39.997718],[116.482362,39.997718],[116.483633,39.998935],[116.48367,39.998968],[116.484648,39.999861]];
 let columns1=[]
 let columns2=[]
 for(let i = 1; i < 80; i++){
@@ -120,12 +128,14 @@ import { trackQuery } from 'network/home'
 import pako from 'pako'
 import loginVue from '../../login/login.vue';
 import db from 'common/localstorage'
+import axios from 'axios'
+var echarts = require('echarts');
 export default {
   components: { tabBar,NavBar },
   name: "trackBack",
   data(){
     return {
-      title:'轨迹回放',
+      title:'',
       map:null,
       center:null,
       result:[],
@@ -156,6 +166,7 @@ export default {
       actions:[{ text: '2' },{ text: '4' },{ text: '8' },{ text: '16' },{ text: '32' }],
       REPLAY_INDEX:0,
       baseUrl: process.env.BASE_URL,
+      t_car:require("assets/image/car.png"),
       // 信息窗体
       infoWindow: null,
       // 巡航轨迹
@@ -228,13 +239,88 @@ export default {
       timeValue: '',
       trackData: [],
       trackInfo:{},
-      infoShow:false
+      infoShow:false,
+      coordinateX:[],
+      chartsData:[]
     }
   },
   mounted(){
-    this.fetch()
+    let that = this
+    if(typeof(AMapUI) == 'undefined'){
+      axios.get("https://webapi.amap.com/ui/1.1/main.js").then(res=>{
+        if(typeof(AMapUI) !== 'undefined'){
+          this.fetch()
+        }else{
+          alert("无法加载地图，请打开网络")
+        }
+      })
+    }else{
+      this.fetch()
+      // this.Init()
+    }
   },
   methods: {
+    //初始化echarts
+    chartsInit(){
+      let that = this
+      var myChart = echarts.init(document.getElementById("loadMain"));
+      let data = this.chartsData
+      let coordX = this.coordinateX
+      //绘制图表
+      let option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'line',
+            label: {
+              show:false,
+              backgroundColor: '#6a7985'
+            },
+          },
+          formatter:'{b0}: <br />{c0}吨'
+        },
+        xAxis: {
+            type: 'category',
+            data: coordX,
+            show:false,
+        },
+        yAxis: {
+            type: 'value',
+            splitLine:{
+              show:false
+            },
+            axisLine:{
+              show:true,
+              lineStyle:{
+                color:"#9a9595"
+              }
+            },
+            axisLabel:{
+              
+            }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        series: [{
+            data: data,
+            type: 'line'
+        }]
+      };
+      //使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+      myChart.on('mousemove', function (params) {
+        let value = (params.value)*1000
+        that.result.forEach(val => {
+          if(val.weightF8 == value){
+            
+          }
+        })
+      });
+    },
     // 初始化巡航组件实例
     initPathSimplifier() {
       let that = this
@@ -252,7 +338,6 @@ export default {
         // TODO
         let linArray = this.lineArr
         let pointDataList = this.result
-        // let linArray = lineArr
         // let pointDataList = path
         // 初始化坐标点
         if (linArray.length > 0) {
@@ -289,7 +374,7 @@ export default {
             console.log('图片加载失败！')
           }
           //对第一条线路创建一个巡航器
-          let image = PathSimplifier.Render.Canvas.getImageContent('/car.png', onload, onerror)
+          let image = PathSimplifier.Render.Canvas.getImageContent("https://img-blog.csdnimg.cn/20201229115537203.png", onload, onerror)
           that.navgtr = that.pathSimplifierIns.createPathNavigator(0, {
             loop: false, //循环播放
             speed: that.navgtrSpeed, //巡航速度，单位千米/小时
@@ -334,17 +419,19 @@ export default {
             that.trackInfo = {
               location:pointDataList[idx].location,
               velocity:pointDataList[idx].velocity,
-              sendTime:pointDataList[idx].sendTime
+              sendTime:pointDataList[idx].sendTime,
+              weight:(pointDataList[idx].weightF8)/1000,
+              distance:that.navgtr.getMovedDistance()
             }
             // 打开信息窗体
-            let content = [
-              '<div style="padding: 5px;">',
-              '<div>接收时间 : ' + pointDataList[idx].sendTime + '</div>',
-              '<div>速&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度 : ' + pointDataList[idx].velocity + '(km/h)</div>',
-              '<div>经&nbsp;&nbsp;纬&nbsp;&nbsp;度 : ' + pointDataList[idx].longitude + ',' + pointDataList[idx].latitude + '</div>',
-              '</div>'
-            ]
-            that.infoWindow.setContent(content.join(''))
+            // let content = [
+            //   '<div style="padding: 5px;">',
+            //   '<div>接收时间 : ' + pointDataList[idx].sendTime + '</div>',
+            //   '<div>速&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度 : ' + pointDataList[idx].velocity + '(km/h)</div>',
+            //   '<div>经&nbsp;&nbsp;纬&nbsp;&nbsp;度 : ' + pointDataList[idx].longitude + ',' + pointDataList[idx].latitude + '</div>',
+            //   '</div>'
+            // ]
+            // that.infoWindow.setContent(content.join(''))
             // that.infoWindow.open(that.map, that.actualList[idx])
             if(idx < len - 1) {
               that.navgtr.setSpeed(that.navgtrSpeed * that.times)
@@ -451,7 +538,7 @@ export default {
       let eTime = this.endTime || this.getNowDate("23:59:59")
       console.log(this.plateNo,sTime,eTime);
       trackQuery(this.plateNo,sTime,eTime).then(res => {
-        console.log(res.data.status === '0');
+        console.log(res);
         if(res.data.status === '0'){
           let data = res.data.result.carHistory
           this.result = this.unzip(data)
@@ -460,14 +547,15 @@ export default {
             this.lineArr = []
             this.result.forEach(val => {
               this.lineArr.push([val.longitude,val.latitude])
+              this.coordinateX.push(val.sendTime)
+              this.chartsData.push((val.weightF8/1000))
             })
-            console.log(this.lineArr);
             this.Init()
             this.$notify({ type: 'primary', message: '请开始播放'});
           }else{
-             this.$notify({ type: 'primary', message: '暂无历史数据'});
-             // 初始化地图
-              this.initMap()
+            this.$notify({ type: 'primary', message: '暂无历史数据'});
+            // 初始化地图
+            this.initMap()
           }
         }
       }).catch(err=>{
@@ -485,6 +573,7 @@ export default {
       this.initInfoWindow()
       this.initPlayBox()
       this.initPathSimplifier()
+      this.chartsInit()
     },
     // 初始化地图
     initMap() {
@@ -756,6 +845,7 @@ export default {
 <style scoped>
 .trackBack{
   height: calc(100% - 46px);
+  position: relative;
 }
 /deep/.van-nav-bar__title{
   color: #fff;
@@ -877,7 +967,10 @@ export default {
 }
 /deep/.amap-maptypecontrol{
   top:auto;
-  bottom:200px
+  bottom:166px
+}
+/deep/.van-overlay{
+  z-index: 304;
 }
 .nowPosition{
   width: 0.3rem;
@@ -889,5 +982,14 @@ export default {
   background: #fff;
   text-align: center;
   line-height: 0.4rem;
+}
+.carLoad{
+  width: 100%;
+  height: 2.5rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: #fff;
+  z-index: 304;
 }
 </style>

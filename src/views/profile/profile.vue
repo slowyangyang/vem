@@ -6,12 +6,12 @@
     <!-- 推送列表  -->
     <my-push-list/>
     <!-- 退出登录 -->
-    <van-button type="danger" round  @click="show = true">退出登录</van-button>
+    <van-button type="danger" round  @click="show = true">用户解绑</van-button>
     <van-action-sheet
       v-model="show"
       :actions="actions"
       cancel-text="取消"
-      description="确定退出吗？"
+      description="确定解绑吗？"
       close-on-click-action
       @select="exit"/>
     <!-- 底部 -->
@@ -25,6 +25,7 @@ import tabBar from '@/components/tabBar'
 import UserInfo from './children/userInfo'
 import MyPushList from './children/myPushList.vue'
 import db from 'common/localstorage'
+import { exitLogin } from 'network/profile'
 export default {
   name: "profile",
   data() {
@@ -47,16 +48,22 @@ export default {
   },
   methods: {
     exit(e){
-      exitLogin().then(res => {
-        if(res.data.code === '0'){
+      let openid = db.get("OPENID")
+      exitLogin(openid).then(res => {
+        console.log(res);
+        if(res.data.status === '0'){
           db.remove("USER")
           db.remove("token")
-          this.$router.push({path:'/login'})
+          db.remove("OPENID")
+          this.$Toast({message:"解绑成功",duration:1500})
+          // this.$router.replace({path:'/login'})
+          location.reload()
         }else{
-          this.$notify({ type: 'primary', message: '退出失败'});
+          this.$Toast({message:"接触解绑失败",duration:1500})
+
         }
       })
-    }
+    },
   },
   mounted(){
     this.infoList = db.get("USER")
