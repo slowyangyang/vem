@@ -22,8 +22,9 @@ export default {
     return {
       title:'登录',
       code:'',
-      APPID :'wxf41afaa220983a6c',
+      // APPID :'wxf41afaa220983a6c',
       // APPID :'wx94adebbf72b68282',
+      APPID:process.env.VUE_APP_APPID,
       local:'',
       openId:'',
     }

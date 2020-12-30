@@ -94,15 +94,16 @@
     </van-overlay>
     <!-- 轨迹详情 -->
     <div class="trackInfo" v-if="infoShow">
-      <p>{{trackInfo.location}}</p>
+      <p>位置：{{trackInfo.location}}</p>
       <p><span>速度：</span>{{trackInfo.velocity}} km/h</p>
       <p><span>时间：</span>{{trackInfo.sendTime}}</p>
       <p><span>重量：</span>{{trackInfo.weight}}吨</p>
       <p><span>里程：</span>{{parseInt(trackInfo.distance)/1000}}km</p>
     </div>
     <!-- 载重 -->
-    <div class="carLoad">
-      <div id="loadMain" ref="loadMain" style="width: 100%;height:100%"></div>
+    <div class="carLoad" ref="carLoad">
+      <p class="controlCharts" @click="trolHandel"><van-icon :name="loadShow ? 'arrow-down' : 'arrow-up'" /></p>
+      <div id="loadMain" class="loadMain" ref="loadMain" style="width: 100%;"></div>
     </div>
     <!-- 定位 -->
     <!-- <div class="nowPosition" @click="getCurrentPosition">
@@ -241,7 +242,9 @@ export default {
       trackInfo:{},
       infoShow:false,
       coordinateX:[],
-      chartsData:[]
+      chartsData:[],
+      myChart:null,
+      loadShow:false
     }
   },
   mounted(){
@@ -263,63 +266,114 @@ export default {
     //初始化echarts
     chartsInit(){
       let that = this
-      var myChart = echarts.init(document.getElementById("loadMain"));
+      this.myChart = echarts.init(document.getElementById("loadMain"));
       let data = this.chartsData
       let coordX = this.coordinateX
       //绘制图表
       let option = {
+        title:{
+          show:true,
+          text: '载重图',
+          textStyle:{
+            color:"#000",
+            fontSize:'14px',
+            fontWeight:500
+          },
+          left: "center",
+        },
+        toolbox: {
+          feature: {
+            // dataZoom: {
+            //   yAxisIndex: 'none'
+            // },
+            restore: {},
+            // saveAsImage: {}
+          },
+          top:0
+        },
         tooltip: {
+          show:true,
           trigger: 'axis',
+          showContent:true,
           axisPointer: {
             type: 'line',
-            label: {
-              show:false,
-              backgroundColor: '#6a7985'
-            },
+            lineStyle:{
+              color:'#ff0000'
+            }
           },
-          formatter:'{b0}: <br />{c0}吨'
+        //  alwaysShowContent:true,
+          formatter:function(params,ticket,callback){
+            let str = `${params[0].name}:<br/>
+            <div style="width:100%;display:flex;justify-content:space-between;align-items:center;">
+              <span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#5470c6;"></span>
+              <span>${params[0].data}吨</span>
+            </div>`
+            return str
+          }
         },
         xAxis: {
-            type: 'category',
-            data: coordX,
-            show:false,
+          type: 'category',
+          data: coordX,
+          show:false,
         },
         yAxis: {
-            type: 'value',
-            splitLine:{
-              show:false
-            },
-            axisLine:{
-              show:true,
-              lineStyle:{
-                color:"#9a9595"
-              }
-            },
-            axisLabel:{
-              
+          type: 'value',
+          splitLine:{
+            show:false
+          },
+          axisLine:{
+            show:true,
+            lineStyle:{
+              color:"#9a9595"
             }
+          },
+          min:function(val){
+            return val.min
+          },
+          max:function(val){
+            return val.max
+          },
+          splitNumber:3
         },
+        dataZoom: [{
+          type:'slider',
+        }],
         grid: {
+          top: '20%',
           left: '3%',
           right: '4%',
           bottom: '3%',
           containLabel: true
         },
         series: [{
-            data: data,
-            type: 'line'
+          data: data,
+          type: 'line',
+          lineStyle:{
+            color:'red'
+          },
+          itemStyle:{
+            color:"red"
+          }
         }]
       };
-      //使用刚指定的配置项和数据显示图表。
-      myChart.setOption(option);
-      myChart.on('mousemove', function (params) {
-        let value = (params.value)*1000
-        that.result.forEach(val => {
-          if(val.weightF8 == value){
-            
-          }
-        })
-      });
+      //显示图表。
+      this.myChart.setOption(option);
+      // this.myChart.on('mousemove', function (params) {
+      //   console.log(params);
+      //   let time = params.name
+      //   that.result.forEach((val,index) => {
+      //     if(val.sendTime == time){
+      //       console.log(index);
+      //       // 移动巡航器
+      //       that.navgtr.moveToPoint(index);
+      //       that.pathSimplifierIns.renderLater();
+      //     }
+      //   })
+      // });
+    },
+    trolHandel(){
+      $(".loadMain").slideToggle()
+      this.loadShow = !this.loadShow
     },
     // 初始化巡航组件实例
     initPathSimplifier() {
@@ -423,6 +477,11 @@ export default {
               weight:(pointDataList[idx].weightF8)/1000,
               distance:that.navgtr.getMovedDistance()
             }
+            that.myChart.dispatchAction({
+                type: 'showTip',
+                seriesIndex: 0,
+                dataIndex: idx
+              }); 
             // 打开信息窗体
             // let content = [
             //   '<div style="padding: 5px;">',
@@ -544,12 +603,24 @@ export default {
           this.result = this.unzip(data)
           console.log(this.result);
           if(this.result.length !== 0){
+            //数据重置
             this.lineArr = []
+            this.coordinateX = []
+            this.chartsData = []
+            console.log(this.result[0].weightF8);
             this.result.forEach(val => {
+              //轨迹数据
               this.lineArr.push([val.longitude,val.latitude])
+              //载重图X轴
               this.coordinateX.push(val.sendTime)
-              this.chartsData.push((val.weightF8/1000))
+              if(!val.weightF8 || val.weightF8 == "" || val.weightF8 == 'undefined'){
+                this.chartsData.push(0)
+              }else{
+                this.chartsData.push((val.weightF8/1000))
+              }
             })
+            console.log(this.chartsData);
+            //初始化地图及相关api
             this.Init()
             this.$notify({ type: 'primary', message: '请开始播放'});
           }else{
@@ -557,10 +628,14 @@ export default {
             // 初始化地图
             this.initMap()
           }
+          //隐藏载重折线图
+          $(".loadMain").hide()
         }
       }).catch(err=>{
         // 初始化地图
         this.initMap()
+        this.$notify({ type: 'primary', message: '网络连接错误'});
+        $(".loadMain").hide()
       })
     },
     //总体初始化
@@ -580,7 +655,6 @@ export default {
       let _this = this
       this.map = new AMap.Map('map', {
         resizeEnable: true,
-        isHotspot:true, 
         zoom: 15
       })
       this.map.plugin(["AMap.MapType"],function(){
@@ -623,7 +697,6 @@ export default {
     },
     // 控制播放按钮
     navgControl(type) {
-      this.map.setZoom(13)
       if(!this.navgtr || !type) {
         return
       }
@@ -651,7 +724,7 @@ export default {
       this.sliderVal = 0; // 进度条清0
       this.times = 2
     },
-    //定位
+    //定位,需用https
     getCurrentPosition(){
       let _this = this
       AMap.plugin('AMap.Geolocation', function() {
@@ -970,7 +1043,7 @@ export default {
   bottom:166px
 }
 /deep/.van-overlay{
-  z-index: 304;
+  z-index: 310;
 }
 .nowPosition{
   width: 0.3rem;
@@ -985,11 +1058,23 @@ export default {
 }
 .carLoad{
   width: 100%;
-  height: 2.5rem;
+  /* height: 2.5rem; */
   position: absolute;
-  bottom: 0;
+  bottom: -2px;
   left: 0;
   background: #fff;
   z-index: 304;
+}
+.controlCharts{
+  width: 100%;
+  height: 0.2rem;
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+}
+.loadMain{
+  width: 100%;
+  height:1.5rem;
+  /* display: none; */
 }
 </style>
