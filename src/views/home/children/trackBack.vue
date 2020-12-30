@@ -103,7 +103,8 @@
     <!-- 载重 -->
     <div class="carLoad" ref="carLoad">
       <p class="controlCharts" @click="trolHandel"><van-icon :name="loadShow ? 'arrow-down' : 'arrow-up'" /></p>
-      <div id="loadMain" class="loadMain" ref="loadMain" style="width: 100%;"></div>
+      <div id="loadMain" class="loadMain" ref="loadMain" style="width: 100%;" v-if="chartsData"></div>
+      <van-empty image="error" description="暂无数据" v-eles/>
     </div>
     <!-- 定位 -->
     <!-- <div class="nowPosition" @click="getCurrentPosition">

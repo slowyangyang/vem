@@ -529,7 +529,7 @@ export default {
               this.initzTree()
             }
           }else{
-            this.$notify("暂无此数据")
+            this.$notify("无此车辆信息")
           }
         })
       }

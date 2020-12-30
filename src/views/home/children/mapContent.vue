@@ -99,7 +99,8 @@ export default {
             plate:val.plateNo,
             local:val.location,
             speed:val.velocity,
-            time:val.sendTime
+            time:val.sendTime,
+            weight:val.weightF8 ? val.weightF8/1000 : 0
           }
         });
         //添加窗体
@@ -118,9 +119,8 @@ export default {
       let _this = this
       let data = e.target.getExtData()
       console.log(data);
-      console.log(3);
       let content = `<p class='w_title' style='text-align: center;font-size: 14px;font-weight:bold;margin-bottom:0.05rem'>${data.plate}</p>
-                      <div class='w_content' style='margin-bottom:0.05rem'><p style='margin-bottom:0.05rem'>速度：${data.speed} (km/h)</p><p>时间：${data.time}</p></div>
+                      <div class='w_content' style='margin-bottom:0.05rem'><p style='margin-bottom:0.05rem'>速度：${data.speed} (km/h)</p><p>时间：${data.time}</p><p>重量：${data.weight}吨</p></div>
                       <div>地点：${data.local}</div>
                       <div class='w_tools' style='display:flex;justify-content:center;color:#4696e6'><div style='' onclick="playBack()">轨迹回放</div></div>` 
       let infowindow = new AMap.InfoWindow({

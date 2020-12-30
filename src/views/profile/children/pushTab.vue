@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { pushPolic } from 'network/profile'
 export default {
   name:'pushTab',
   data(){
@@ -51,7 +52,6 @@ export default {
         speeding:{checked:false,time:0},
         fatigue:{checked:false,time:0}
       }
-      
     }
   },
   mounted(){
@@ -59,7 +59,12 @@ export default {
   },
   methods: {
     onSubmit(){
+      pushPolic().then(res => {
+        let data = res.data
+        console.log(data);
+      })
       console.log(this.form);
+      
     },
     reset(){
       this.form = {
