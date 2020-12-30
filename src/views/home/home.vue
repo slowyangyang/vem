@@ -40,11 +40,13 @@ export default {
   },
   activated(){
     if(window.location.href.indexOf("?") !== -1){
-      let parm = window.location.href.split("?")[1].split("=")[0]
-      if(parm == "code"){
+      let parm = window.location.href.split("?")[1].split("=")
+      console.log(window.location.href.split("?")[1]);
+      // if(parm == "code"){
+        console.log(333);
         console.log(this.ridUrlParam(window.location.href,['code']));
         location.href=this.ridUrlParam(window.location.href,['code'])
-      }
+      // }
     }
   },
   methods: {

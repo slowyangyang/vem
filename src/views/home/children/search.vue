@@ -509,7 +509,6 @@ export default {
       //本地搜索
       // this.searchFun(newV, false, false)
       if(newV.length>=3 && newV){
-        console.log(3333);
         searchPalteNo(newV).then(res=>{
           console.log(res);
           let data = res.data

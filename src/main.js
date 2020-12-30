@@ -22,7 +22,6 @@ Vue.prototype.$Toast = Toast
 // Vue.prototype.$delete = request.delete
 
 Vue.config.productionTip = false
-
 new Vue({
   router,
   store,

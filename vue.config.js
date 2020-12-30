@@ -3,6 +3,7 @@ const path = require('path')
 module.exports = {
   publicPath: "./",
   assetsDir: "./static",
+  productionSourceMap: false,
   configureWebpack: {
     externals: {
       'AMap': 'AMap'

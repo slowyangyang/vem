@@ -8,8 +8,10 @@ Toast.setDefaultOptions({
 })
 
 let FEBS_REQUEST = axios.create({
+  baseURL: process.env.VUE_APP_BASEURL,
   // baseURL: `http://192.168.1.140:9002`,
-  baseURL: `http://192.168.1.222:9002`,
+  // baseURL: `http://192.168.1.221:9999`,
+  // baseURL: `http://192.168.1.222:9002`,
   // baseURL: `http://gzh.thygps.com`,
   responseType: 'json',
   validateStatus (status) {
