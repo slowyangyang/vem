@@ -59,9 +59,10 @@ export default {
           // this.$router.replace({path:'/login'})
           location.reload()
         }else{
-          this.$Toast({message:"接触解绑失败",duration:1500})
-
+          this.$Toast({message:"解除解绑失败",duration:1500})
         }
+      }).catch(err => {
+          this.$Toast({message:"网络错误，解绑失败",duration:1500})
       })
     },
   },

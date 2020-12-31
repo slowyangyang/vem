@@ -3,8 +3,8 @@ const path = require('path')
 module.exports = {
   publicPath: "./",
   assetsDir: "./static",
-  productionSourceMap: false,
-  configureWebpack: {
+  productionSourceMap: false,//去掉.map
+  configureWebpack: {//覆盖webpack配置
     externals: {
       'AMap': 'AMap'
     },
@@ -26,7 +26,7 @@ module.exports = {
         }
       }
     },
-    resolve: {
+    resolve: {//路径别名
       alias: {
         'assets':"@/assets",
         'common':"@/common",
@@ -42,10 +42,9 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const productionGzipExtensions = ['js', 'css'];
  
 const env = process.env.NODE_ENV;
-console.log(env);
  
 configureWebpack: (config) => {
-  if (env !== 'development' || env !== 'test') {
+  if (env == "production") {
     config.plugins.push(new CompressionWebpackPlugin({
       algorithm: 'gzip',
       test: new RegExp(`\\.(${productionGzipExtensions.join('|')})$`),

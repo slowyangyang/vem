@@ -103,8 +103,10 @@
     <!-- 载重 -->
     <div class="carLoad" ref="carLoad">
       <p class="controlCharts" @click="trolHandel"><van-icon :name="loadShow ? 'arrow-down' : 'arrow-up'" /></p>
-      <div id="loadMain" class="loadMain" ref="loadMain" style="width: 100%;" v-if="chartsData"></div>
-      <van-empty image="error" description="暂无数据" v-eles/>
+      <!-- <div class="loadBox"> -->
+        <div id="loadMain" class="loadMain" ref="loadMain" style="width: 100%;"></div>
+        <!-- <van-empty image="https://img.yzcdn.cn/vant/custom-empty-image.png" image-size="70" description="载重图暂无数据" v-else/> -->
+      <!-- </div> -->
     </div>
     <!-- 定位 -->
     <!-- <div class="nowPosition" @click="getCurrentPosition">
@@ -379,6 +381,7 @@ export default {
     // 初始化巡航组件实例
     initPathSimplifier() {
       let that = this
+      console.log(that.chartsData);
       AMapUI.load(['ui/misc/PathSimplifier'], (PathSimplifier) => {
         if (!PathSimplifier.supportCanvas) {
           alert('当前环境不支持 Canvas！')
@@ -478,11 +481,14 @@ export default {
               weight:(pointDataList[idx].weightF8)/1000,
               distance:that.navgtr.getMovedDistance()
             }
-            that.myChart.dispatchAction({
+            if(that.myChart){
+              that.myChart.dispatchAction({
                 type: 'showTip',
                 seriesIndex: 0,
                 dataIndex: idx
               }); 
+            }
+            
             // 打开信息窗体
             // let content = [
             //   '<div style="padding: 5px;">',
@@ -1072,6 +1078,10 @@ export default {
   text-align: center;
   font-size: 18px;
   background: #fff;
+}
+.loadBox{
+   width: 100%;
+  height:1.5rem;
 }
 .loadMain{
   width: 100%;
