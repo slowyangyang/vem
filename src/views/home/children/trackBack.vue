@@ -605,7 +605,9 @@ export default {
       console.log(this.plateNo,sTime,eTime);
       trackQuery(this.plateNo,sTime,eTime).then(res => {
         console.log(res);
-        if(res.data.status === '0'){
+        //隐藏载重折线图
+        $(".loadMain").hide()
+        if(res.data.status === 0){
           let data = res.data.result.carHistory
           this.result = this.unzip(data)
           console.log(this.result);
@@ -635,14 +637,14 @@ export default {
             // 初始化地图
             this.initMap()
           }
-          //隐藏载重折线图
-          $(".loadMain").hide()
+        }else{
+          this.initMap()
+          this.$notify({ type: 'primary', message: res.data.msg});
         }
       }).catch(err=>{
         // 初始化地图
         this.initMap()
-        this.$notify({ type: 'primary', message: '网络连接错误'});
-        $(".loadMain").hide()
+        this.$notify({ type: 'primary', message: data.msg});
       })
     },
     //总体初始化

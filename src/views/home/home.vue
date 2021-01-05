@@ -40,58 +40,54 @@ export default {
   },
   activated(){
     if(window.location.href.indexOf("?") !== -1){
-      let parm = window.location.href.split("?")[1].split("=")
-      console.log(window.location.href.split("?")[1]);
-      // if(parm == "code"){
-        console.log(this.ridUrlParam(window.location.href,['code']));
-        // location.href=this.ridUrlParam(window.location.href,['code'])
-      // }
+      location.href=this.ridUrlParam(window.location.href,['code','state'])
     }
   },
   methods: {
-   Search(e){
-     console.log(e);
-   },
-   Cancel(){
-     //清除搜索内容
-   },
+    Search(e){
+      console.log(e);
+    },
+    Cancel(){
+      //清除搜索内容
+    },
    //获取JSSDK鉴权
-   getJsSdk(){
-    let url = location.href.split("#")[0]
-    console.log(url);
-    getSDK(url).then(res => {
-      console.log(res);
-    })
-   },
+    getJsSdk(){
+      let url = location.href.split("#")[0]
+      console.log(url);
+      getSDK(url).then(res => {
+        console.log(res);
+      })
+    },
+    //消除地址栏参数
     ridUrlParam(url,aParam){
-    aParam.forEach(item => {
-      const fromindex = url.indexOf(`${item}=`) //必须加=号，避免参数值中包含item字符串
-      if (fromindex !== -1) {
-        // 通过url特殊符号，计算出=号后面的的字符数，用于生成replace正则
-        const startIndex = url.indexOf('=', fromindex)
-        const endIndex = url.indexOf('&', fromindex)
-        const hashIndex = url.indexOf('#', fromindex)
-        
-        let reg;
-        if (endIndex !== -1) { // 后面还有search参数的情况
-          const num = endIndex - startIndex
-          reg = new RegExp(`${item}=.{${num}}`)
-          url = url.replace(reg, '')
-        } else if (hashIndex !== -1) { // 有hash参数的情况
-          const num = hashIndex - startIndex - 1
-          reg = new RegExp(`&?${item}=.{${num}}`)
-          url = url.replace(reg, '')
-        } else { // search参数在最后或只有一个参数的情况
-          reg = new RegExp(`&?${item}=.+`)
-          url = url.replace(reg, '')
+      aParam.forEach(item => {
+        const fromindex = url.indexOf(`${item}=`) //必须加=号，避免参数值中包含item字符串
+        if (fromindex !== -1) {
+          // 通过url特殊符号，计算出=号后面的的字符数，用于生成replace正则
+          const startIndex = url.indexOf('=', fromindex)
+          const endIndex = url.indexOf('&', fromindex)
+          const hashIndex = url.indexOf('#', fromindex)
+          
+          let reg;
+          if (endIndex !== -1) { // 后面还有search参数的情况
+            const num = endIndex - startIndex
+            reg = new RegExp(`${item}=.{${num}}`)
+            url = url.replace(reg, '')
+          } else if (hashIndex !== -1) { // 有hash参数的情况
+            const num = hashIndex - startIndex - 1
+            reg = new RegExp(`&?${item}=.{${num}}`)
+            url = url.replace(reg, '')
+          } else { // search参数在最后或只有一个参数的情况
+            reg = new RegExp(`&?${item}=.+`)
+            url = url.replace(reg, '')
+          }
         }
+      })
+      const noSearchParam = url.indexOf('=') 
+      if( noSearchParam === -1 ){
+        url = url.replace(/\?/, '') // 如果已经没有参数，删除？号
       }
-    });
-    const noSearchParam = url.indexOf('=') 
-    if( noSearchParam === -1 ){
-      url = url.replace(/\?/, '') // 如果已经没有参数，删除？号
-    }
-    return url    
+      return url    
     }
   }
 }

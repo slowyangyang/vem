@@ -56,13 +56,12 @@ export default {
           db.remove("token")
           db.remove("OPENID")
           this.$Toast({message:"解绑成功",duration:1500})
-          // this.$router.replace({path:'/login'})
           location.reload()
         }else{
-          this.$Toast({message:"解除解绑失败",duration:1500})
+          this.$Toast({message:res.data.msg,duration:1500})
         }
       }).catch(err => {
-          this.$Toast({message:"网络错误，解绑失败",duration:1500})
+          this.$Toast({message:res.data.msg,duration:1500})
       })
     },
   },

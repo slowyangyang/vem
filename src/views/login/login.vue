@@ -46,11 +46,10 @@ export default {
           //保存用户信息
           this.saveUser(data.result)
           db.save("USER",data.result)
-          db.save("OPENID",data.result.openid)
           that.$router.push({path:'/home'})
           this.$Toast({message:"登录成功",duration:1500})
         }else{
-          this.$Toast({message:"登录失败，请重新登录",duration:1500})
+          this.$Toast({message:data.msg,duration:1500})
         }
       }).catch(err => {
         this.$notify({ type: 'primary', message: data.message});
@@ -76,12 +75,11 @@ export default {
             this.saveUser(data.result)
             db.save("USER",data.result)
             this.$router.push({path:'/home'})
-            
           }else{
             this.openId = data.result
-            db.save("OPENID",data.result.openid)
+            db.save("OPENID",data.result)
             this.$router.push({path:'/login'})
-            this.$notify({ type: 'primary', message: "请先登录"});
+            this.$notify({ type: 'primary', message: data.msg});
           }
       }).catch((error) => {
         console.log(error);

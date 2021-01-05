@@ -45,6 +45,7 @@ FEBS_REQUEST.interceptors.response.use((config) => {
   if(config.data.status == '5'){
     db.remove('token')
     db.remove('USER')
+    db.remove('OPENID')
     Notify({ type: 'primary', message: '登录已过期，请重新登录'});
     setTimeout(()=>{
       location.reload()

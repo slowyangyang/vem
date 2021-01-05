@@ -42,29 +42,29 @@ const router = new VueRouter({
   routes
 })
 /*路由跳转之前判断*/
-// router.beforeEach((to, from, next)=>{
-//   let that = this
-//   // console.log(to);
-//   if(to.meta.title){
-//     document.title = to.meta.title
-//   }
-//   if(to.matched.length == 0){
-//     next("/empty")
-//   }
-//   if(to.path != '/login'){
-//     if(to.meta.isAuthenticated){
-//       let token = db.get('token')
-//       if(token) {
-//         next()
-//       }else{
-//         next('/login')
-//       }
-//     }else{
-//       next()
-//     }
-//   }else{
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next)=>{
+  let that = this
+  // console.log(to);
+  if(to.meta.title){
+    document.title = to.meta.title
+  }
+  if(to.matched.length == 0){
+    next("/empty")
+  }
+  if(to.path != '/login'){
+    if(to.meta.isAuthenticated){
+      let token = db.get('token')
+      if(token) {
+        next()
+      }else{
+        next('/login')
+      }
+    }else{
+      next()
+    }
+  }else{
+    next()
+  }
+})
 
 export default router
