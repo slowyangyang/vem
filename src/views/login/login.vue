@@ -46,6 +46,7 @@ export default {
           //保存用户信息
           this.saveUser(data.result)
           db.save("USER",data.result)
+          db.save("OPENID",data.result.openid)
           that.$router.push({path:'/home'})
           this.$Toast({message:"登录成功",duration:1500})
         }else{
@@ -74,6 +75,7 @@ export default {
             //保存用户信息
             this.saveUser(data.result)
             db.save("USER",data.result)
+            db.save("OPENID",data.result.openid)
             this.$router.push({path:'/home'})
           }else{
             this.openId = data.result

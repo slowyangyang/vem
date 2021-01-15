@@ -606,8 +606,7 @@ export default {
       trackQuery(this.plateNo,sTime,eTime).then(res => {
         console.log(res);
         //隐藏载重折线图
-        $(".loadMain").hide()
-        if(res.data.status === 0){
+        if(res.data.status === '0'){
           let data = res.data.result.carHistory
           this.result = this.unzip(data)
           console.log(this.result);
@@ -631,20 +630,24 @@ export default {
             console.log(this.chartsData);
             //初始化地图及相关api
             this.Init()
+            $(".loadMain").hide()
             this.$notify({ type: 'primary', message: '请开始播放'});
           }else{
             this.$notify({ type: 'primary', message: '暂无历史数据'});
             // 初始化地图
             this.initMap()
+            $(".loadMain").hide()
           }
         }else{
           this.initMap()
+          $(".loadMain").hide()
           this.$notify({ type: 'primary', message: res.data.msg});
         }
       }).catch(err=>{
         // 初始化地图
         this.initMap()
-        this.$notify({ type: 'primary', message: data.msg});
+        $(".loadMain").hide()
+        console.log(err);
       })
     },
     //总体初始化
@@ -766,7 +769,9 @@ export default {
       let date = new Date()
       let y = date.getFullYear()
       let m = date.getMonth()+1
+      m = m < 10 ? '0'+m : m
       let d = date.getDate()
+      d = d < 10 ? '0'+d : d
       return y+'-'+m+'-'+d+' '+t
     },
     spickerConfirm(val){
