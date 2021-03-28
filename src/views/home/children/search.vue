@@ -236,6 +236,9 @@ export default {
       this.getZNodes(treeNode)
     },
     getZNodes(treeNode){
+      if(treeNode.children){
+        return false
+      }
       getZNodes(treeNode.id).then(res => {
         console.log(res);
         let data = res.data
@@ -254,6 +257,7 @@ export default {
               obj.nocheck = true
               nodes.push(obj)
             })
+            console.log(nodes);
             this.treeObj.addNodes(treeNode,-1,nodes,true)
           }
           if(bv){
