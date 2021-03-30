@@ -247,7 +247,9 @@ export default {
       coordinateX:[],
       chartsData:[],
       myChart:null,
-      loadShow:false
+      loadShow:false,
+      chartsText:'载重图',
+      mileageSpeedFlag:false
     }
   },
   mounted(){
@@ -276,7 +278,7 @@ export default {
       let option = {
         title:{
           show:true,
-          text: '载重图',
+          text: that.chartsText,
           textStyle:{
             color:"#000",
             fontSize:'14px',
@@ -362,17 +364,19 @@ export default {
       //显示图表。
       this.myChart.setOption(option);
       // this.myChart.on('mousemove', function (params) {
-      //   console.log(params);
-      //   let time = params.name
-      //   that.result.forEach((val,index) => {
-      //     if(val.sendTime == time){
-      //       console.log(index);
-      //       // 移动巡航器
-      //       that.navgtr.moveToPoint(index);
-      //       that.pathSimplifierIns.renderLater();
-      //     }
-      //   })
+
+      //   that.mileageSpeedFlag = true;
       // });
+      // this.myChart.on('updateAxisPointer', function(params) {
+      //   // 获取当前图表对应的地理位置
+      //   console.log(that.mileageSpeedFlag);
+      //   var xAxisInfo = params.axesInfo[0];
+      //   if (xAxisInfo && that.mileageSpeedFlag) {
+      //     var index = params.dataIndex;
+      //     that.navgtr.moveToPoint(index,0);
+      //     that.pathSimplifierIns.renderLater();
+      //   }
+      // })
     },
     trolHandel(){
       $(".loadMain").slideToggle()
@@ -481,7 +485,8 @@ export default {
               weight:(pointDataList[idx].weightF8)/1000,
               distance:that.navgtr.getMovedDistance()
             }
-            if(that.myChart){
+            //动态设置tooltip
+            if(that.myChart && !that.mileageSpeedFlag){
               that.myChart.dispatchAction({
                 type: 'showTip',
                 seriesIndex: 0,
@@ -608,6 +613,7 @@ export default {
         //隐藏载重折线图
         if(res.data.status === '0'){
           let data = res.data.result.carHistory
+          let isLowLoad = res.data.result.isLowLoad
           this.result = this.unzip(data)
           console.log(this.result);
           if(this.result.length !== 0){
@@ -618,14 +624,30 @@ export default {
             console.log(this.result[0].weightF8);
             this.result.forEach(val => {
               //轨迹数据
-              this.lineArr.push([val.longitude,val.latitude])
-              //载重图X轴
-              this.coordinateX.push(val.sendTime)
-              if(!val.weightF8 || val.weightF8 == "" || val.weightF8 == 'undefined'){
-                this.chartsData.push(0)
+                this.lineArr.push([val.longitude,val.latitude])
+              //低精度判断  true低精度  false高精度
+              if(isLowLoad){
+                this.chartsText = '载重图'
+                //载重图X轴
+                this.coordinateX.push(val.sendTime)
+                if(!val.newWeight || val.newWeight == "null" || val.newWeight == 'undefined'){
+                  this.chartsData.push(0)
+                }else{
+                  this.chartsData.push((val.newWeight/1000))
+                }
               }else{
-                this.chartsData.push((val.weightF8/1000))
+                this.chartsText = '重量图'
+                //轨迹数据
+                // this.lineArr.push([val.longitude,val.latitude])
+                //重量图X轴
+                this.coordinateX.push(val.sendTime)
+                if(!val.weight || val.weight == "null" || val.weight == 'undefined'){
+                  this.chartsData.push(0)
+                }else{
+                  this.chartsData.push((val.weight/1000))
+                }
               }
+              
             })
             console.log(this.chartsData);
             //初始化地图及相关api

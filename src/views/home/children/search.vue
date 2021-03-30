@@ -259,6 +259,7 @@ export default {
               obj.nocheck = true
               nodes.push(obj)
             })
+            console.log(nodes);
             this.treeObj.addNodes(treeNode,-1,nodes,true)
           }
           if(bv){
