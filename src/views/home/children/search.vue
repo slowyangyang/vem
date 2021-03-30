@@ -155,14 +155,15 @@ export default {
       ],
       bvId:[],
       timer:null,
-      autoParam:[]
+      autoParam:[],
+      index:1
     }
   },
   mounted(){
     // this.initzTree()
   },
   activated(){
-    console.log(this.bvId);
+    // console.log(this.bvId);
     if(this.bvId.length){
       this.polling()
     }
@@ -214,7 +215,7 @@ export default {
     },
     queryCar(bvId){
       queryLocal(bvId).then(res => {
-        console.log(res);
+        // console.log(res);
         let data = res.data
         if(data.status === '0'){
           this.$Bus.$emit('getlocal',data.result.vehicle)
@@ -229,17 +230,21 @@ export default {
     },
     //展开时请求子节点
     Expand(event, treeId, treeNode){
-      console.log(treeNode);
+      // console.log(treeNode);
       if(!treeNode.isParent){
         return
       }
       this.getZNodes(treeNode)
     },
     getZNodes(treeNode){
+      //如果节点中有车辆，则不发送请求
+      if(treeNode.children){
+        return false
+      }
       getZNodes(treeNode.id).then(res => {
-        console.log(res);
         let data = res.data
         let result = this.unzip(res.data.result)
+        // console.log(result);
         let nodes = []
         if(data.status == 0){
           let org = result.data.org
@@ -254,6 +259,7 @@ export default {
               obj.nocheck = true
               nodes.push(obj)
             })
+            console.log(nodes);
             this.treeObj.addNodes(treeNode,-1,nodes,true)
           }
           if(bv){
@@ -266,10 +272,11 @@ export default {
               obj.orgId = val.ve.orgId
               nodes.push(obj)
             })
+            // console.log(nodes);
             this.treeObj.addNodes(treeNode,-1,nodes,true)
           }
           this.treeObj.updateNode(treeNode,false)
-          console.log(this.zNodes);
+          // console.log(this.zNodes);
         }else{
           this.$notify("暂无此数据")
         }
@@ -284,7 +291,7 @@ export default {
     },
     zTreeOnClick(event, treeId, treeNode){
       let checked = this.treeObj.getCheckedNodes(true)
-      console.log(treeNode);
+      // console.log(treeNode);
       if(treeNode.isParent){
         if(treeNode.open){
           this.treeObj.expandNode(treeNode,false)
@@ -307,7 +314,7 @@ export default {
     },
     onchecked(event, treeId, treeNode){
       let checked = this.treeObj.getCheckedNodes()
-      console.log(checked);
+      // console.log(checked);
       if(checked.length > 3){
         if(treeNode.checked){
           this.$Toast({message:'请最多选择三个',duration:1500})
@@ -371,7 +378,7 @@ export default {
               })
               this.treeObj.updateNode(nodes[i])
             }
-            console.log(nodes[i]);
+            // console.log(nodes[i]);
             this.treeObj.showNode(nodes[i])
             this.nodesShow.push(nodes[i])
           }else {
@@ -386,7 +393,7 @@ export default {
           var pathOfOne = node.getPath()
           if (pathOfOne && pathOfOne.length > 0) {
             for (var i = 0; i < pathOfOne.length - 1; i++) {
-              console.log(pathOfOne[i]);
+              // console.log(pathOfOne[i]);
                 this.treeObj.showNode(pathOfOne[i])
               this.treeObj.expandNode(pathOfOne[i], true)
             }
@@ -402,8 +409,8 @@ export default {
     fetch(treeCode){
       getZNodes(treeCode).then(res => {
         let data = res.data
-        console.log(data);
         let result = this.unzip(res.data.result)
+        // console.log(result);
         if(data.status === '0'){
           let org = result.data.org
           let bv = result.data.bv
@@ -421,7 +428,7 @@ export default {
               obj.iconClose = "../../../src/assets/image/reduce.png"
               this.zNodes.push(obj)
             })
-            console.log(this.zNodes);
+            // console.log(this.zNodes);
           }
           //遍历同级节点
           if(bv){
@@ -434,6 +441,7 @@ export default {
               this.zNodes.push(obj)
             })
           }
+          // console.log(this.zNodes);
           this.initzTree()
         }else{
           this.$notify({type:'primary',message:data.message})
@@ -448,7 +456,7 @@ export default {
       }
       this.timer = setInterval(()=> {
         queryLocal(this.bvId).then(res => {
-          console.log(res);
+          // console.log(res);
           let data = res.data
           if(data.status == 0){
             this.$Bus.$emit('getlocal',data.result.vehicle)
@@ -456,7 +464,7 @@ export default {
             this.$notify({ type: 'primary', message: data.msg});
           }
         })
-      },30000)
+      },10000)
     },
     // 解析压缩包数据
     unzip(key) {
@@ -510,9 +518,9 @@ export default {
       // this.searchFun(newV, false, false)
       if(newV.length>=3 && newV){
         searchPalteNo(newV).then(res=>{
-          console.log(res);
           let data = res.data
           let result = this.unzip(res.data.result)
+          // console.log(result);
           if(data.status === '0'){
             let bv = result.data.bv
             // let bv = res.data.result.data.bv
