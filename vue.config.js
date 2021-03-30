@@ -3,6 +3,9 @@ const path = require('path')
 module.exports = {
   publicPath: "./",
   assetsDir: "./static",
+  devServer: {
+    port: 8080
+  },
   productionSourceMap: false,//去掉.map
   configureWebpack: {//覆盖webpack配置
     externals: {

@@ -59,6 +59,8 @@ export default {
   },
   methods: {
     onSubmit(){
+      this.$Toast({message:'正在修复中...',duration:2000})
+      return false
       pushPolic().then(res => {
         let data = res.data
         console.log(data);

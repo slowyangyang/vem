@@ -6,6 +6,7 @@ import Profile from './profile'
 import policePush from './profile/policePush'
 import Login from './login'
 import trackBack from './home/trackBack'
+import realVideo from './home/realVideo'
 import contactUs from './contactUs'
 import db from 'common/localstorage'
 
@@ -34,6 +35,7 @@ const routes = [
   policePush,
   contactUs,
   trackBack,
+  realVideo
 ]
 
 const router = new VueRouter({
@@ -45,9 +47,9 @@ const router = new VueRouter({
 router.beforeEach((to, from, next)=>{
   let that = this
   // console.log(to);
-  if(to.meta.title){
-    document.title = to.meta.title
-  }
+  // if(to.meta.title){
+  //   document.title = to.meta.title
+  // }
   if(to.matched.length == 0){
     next("/empty")
   }

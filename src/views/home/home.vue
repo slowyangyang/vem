@@ -21,6 +21,7 @@ import Search from './children/search'
 import mapContent from './children/mapContent'
 import {getCookie} from 'common/utils'
 import { getSDK } from 'network/home'
+import axios from 'axios'
 export default {
   name:'home',
   components: {

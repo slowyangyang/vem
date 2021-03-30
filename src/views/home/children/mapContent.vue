@@ -44,12 +44,13 @@ export default {
     }
   },
   created(){
+    
   },
   activated(){
     this.$Bus.$on("getlocal",position => {
       // this.markers = []
       this.markers = position
-      console.log(this.markers);
+      console.log([this.markers[0].longitude,this.markers[0].latitude]);
       this.addMarker()
     })
   },
@@ -118,7 +119,8 @@ export default {
     createInfoWindow(e) {
       let _this = this
       let data = e.target.getExtData()
-      console.log(data);
+      // data.plate = '渝D44497'
+      //实时视频本平台的车无数据，可能会无法观看
       let content = `<p class='w_title' style='text-align: center;font-size: 14px;font-weight:bold;margin-bottom:0.05rem'>${data.plate}</p>
                       <div class='w_content' style='margin-bottom:0.05rem'>
                         <p style='margin-bottom:0.05rem'>速度：${data.speed} (km/h)</p>
@@ -126,7 +128,11 @@ export default {
                         <p>重量：${data.weight}吨</p>
                       </div>
                       <div>地点：${data.local}</div>
-                      <div class='w_tools' style='display:flex;justify-content:center;color:#4696e6'><div style='' onclick="playBack()">轨迹回放</div></div>` 
+                      <div class='w_tools' style='display:flex;justify-content:center;color:#4696e6'>
+                      <div style='margin-right:0.1rem' onclick="playBack()">轨迹回放</div>
+                      <div style=''">
+                      <a style="color:#4696e6" href=https://zs.thygps.com/clbs/v/monitoring/forward?key=EFAD60B7A0EC7016EE4AFC9B3CE5D52E&VehPlateNum=${data.plate}&VehPlateColorCode=2&Channel=1,2">实时视频</a>
+                      </div></div>`
       let infowindow = new AMap.InfoWindow({
         autoMove:true,
         offset: new AMap.Pixel(0, -10),
@@ -138,6 +144,10 @@ export default {
       //轨迹回放
       window.playBack = ()=>{
         _this.$router.push({path:'/trackBack?plateNo='+data.plate})
+      }
+      window.playVideo = ()=>{
+
+        // _this.$router.push({path:'/realVideo?plateNo='+data.plate})
       }
       //详情
       window.detail = ()=>{
@@ -197,10 +207,7 @@ export default {
      margin-bottom: 0.08rem;
    }
    .w_tools{
-     display: flex;
-    justify-content: center;
-    margin-top: 0.05rem;
-    color: #57aada;
+    background: red;
    }
    .w_tools > div:first-child{
      margin-right: 0.2rem;
