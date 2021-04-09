@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '../store'
-import {Toast,Notify} from 'vant'
+import {Toast, Notify, Dialog} from 'vant'
 import db from 'common/localstorage'
 Toast.setDefaultOptions({
   forbidClick: true,
@@ -52,9 +52,17 @@ FEBS_REQUEST.interceptors.response.use((config) => {
   Toast.clear()
   return config
 }, (error) => {
+  //全局请求出错处理
   if (error.response) {
     let errorMessage = error.response.data === null ? '系统内部异常，请联系网站管理员' : error.response.data.message
-    Toast({message:errorMessage})
+    Dialog.alert({
+      title: '出错啦',
+      message: errorMessage,
+    }).then(() => {
+      // on close
+    }).catch(() => {
+
+    })
   }
   Toast.clear()
   return Promise.reject(error)

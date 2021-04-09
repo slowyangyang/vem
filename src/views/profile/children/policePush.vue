@@ -1,8 +1,9 @@
 <template>
   <div class="policePush">
     <nav-bar :title="title" :left-arrow="true"/>
+    <!-- 报警推送 -->
     <push-tab/>
-    <!-- <tab-bar/> -->
+
   </div>
 </template>
 

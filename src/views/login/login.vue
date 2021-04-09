@@ -20,7 +20,7 @@ export default {
   },
   data(){
     return {
-      title:'登录',
+      title:'用户绑定',
       code:'',
       // APPID :'wxf41afaa220983a6c',
       // APPID :'wx94adebbf72b68282',
@@ -48,7 +48,7 @@ export default {
           db.save("USER",data.result)
           db.save("OPENID",data.result.openid)
           that.$router.push({path:'/home'})
-          this.$Toast({message:"登录成功",duration:1500})
+          this.$Toast({message:"绑定成功",duration:1500})
         }else{
           this.$Toast({message:data.msg,duration:1500})
         }

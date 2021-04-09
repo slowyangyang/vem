@@ -5,8 +5,14 @@ export function exitLogin(OPENID){
   return request.get("/app/login/unbind?openId="+OPENID)
 }
 
-//报警设置
-export function pushPolic(data){
-  return request.get("")
+//获取报警设置
+export function getPushList(){
+  return request.get("/app/msg/push/setting/get")
 }
+
+//更新报警设置
+export function updataPushList(params){
+  return request.post("/app/msg/push/setting",params)
+}
+
 
