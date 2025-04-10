@@ -1,59 +1,35 @@
-;(function (designWidth, maxWidth) {
-	var doc = document,
-			win = window;
-	var docEl = doc.documentElement;
-	var tid;
-	var rootItem, rootStyle;
+;(function(designWidth, maxWidth) {
+  var doc = document;
+  var win = window;
+  var docEl = doc.documentElement;
+  var resizeFlag = false; // 标志位，用于控制何时重新计算font-size（仅在窗口大小变化时）
 
-	function refreshRem() {
-			var width = docEl.getBoundingClientRect().width;
-			if (!maxWidth) {
-					maxWidth = 540;
-			}
-			;
-			if (width > maxWidth) {
-					width = maxWidth;
-			}
-			//与淘宝做法不同，直接采用简单的rem换算方法1rem=100px
-			var rem = width * 100 / designWidth;
-			//兼容UC开始
-			rootStyle = "html{font-size:" + rem + 'px !important}';
-			rootItem = document.getElementById('rootsize') || document.createElement("style");
-			if (!document.getElementById('rootsize')) {
-					document.getElementsByTagName("head")[0].appendChild(rootItem);
-					rootItem.id = 'rootsize';
-			}
-			if (rootItem.styleSheet) {
-					rootItem.styleSheet.disabled || (rootItem.styleSheet.cssText = rootStyle)
-			} else {
-					try {
-							rootItem.innerHTML = rootStyle
-					} catch (f) {
-							rootItem.innerText = rootStyle
-					}
-			}
-			//兼容UC结束
-			docEl.style.fontSize = rem + "px";
-	};
-	refreshRem();
+  function updateRem(force) {
+    // 如果force为true，或者resizeFlag为true，则重新计算font-size
+    if (!force && !resizeFlag) return;
+    resizeFlag = false; // 重置标志位（仅当非强制计算时）
+    var width = docEl.clientWidth;
+    if (width > maxWidth) width = maxWidth;
+    var rem = width * 100 / designWidth;
+    docEl.style.fontSize = rem + 'px';
+  }
 
-	win.addEventListener("resize", function () {
-			clearTimeout(tid); //防止执行两次
-			tid = setTimeout(refreshRem, 300);
-	}, false);
+  function onResize() {
+    resizeFlag = true; // 设置标志位，表示需要重新计算font-size
+    win.requestAnimationFrame(updateRem); // 在下一次重绘之前调用updateRem
+  }
 
-	win.addEventListener("pageshow", function (e) {
-			if (e.persisted) { // 浏览器后退的时候重新计算
-					clearTimeout(tid);
-					tid = setTimeout(refreshRem, 300);
-			}
-	}, false);
+  win.addEventListener('resize', onResize);
+  win.addEventListener('pageshow', function(e) {
+    if (e.persisted) updateRem(true); // 强制重新计算font-size
+  });
 
-	if (doc.readyState === "complete") {
-			doc.body.style.fontSize = "16px";
-	} else {
-			doc.addEventListener("DOMContentLoaded", function (e) {
-					doc.body.style.fontSize = "16px";
-			}, false);
-	}
-})(375, 750);
+  doc.addEventListener('DOMContentLoaded', function() {
+    updateRem(true); // 强制在DOM内容加载完成后重新计算font-size
+    doc.body.style.fontSize = '16px';
+  });
+
+  win.onload = function() {
+    updateRem(true); // 强制在页面完全加载后重新计算font-size
+  };
+})(750, 750);
